@@ -1,0 +1,19 @@
+{% extends "hw/base.html" %}
+
+{% block title %}Show All{% endblock %}
+
+{% block content %}
+  <h2>All Quotes</h2>
+
+  <ul>
+    {% for q in quotes %} <!--For each quote in the quotes list-->
+      <li>"{{ q }}"</li>
+    {% endfor %}
+  </ul>
+
+  <h2>All Images</h2>
+
+  {% for img in images %} <!--For each image in the image list-->
+    <img src="{{ img }}" alt="Steve Jobs" width="200">
+  {% endfor %}
+{% endblock %}

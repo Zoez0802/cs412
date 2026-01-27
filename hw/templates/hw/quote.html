@@ -1,0 +1,21 @@
+{% extends "hw/base.html" %}
+
+{% block title %}Quote{% endblock %}
+
+{% block content %}
+  <h2>New Quote</h2>
+
+  <p>
+    "{{ quote }}"
+  </p>
+
+  <p>
+    <img src="{{ image }}" alt="Steve Jobs" width="350">
+  </p>
+
+  <p>
+    Click
+    <a href="{% url 'quote' %}">Quote</a>
+    again for a new one.
+  </p>
+{% endblock %}
