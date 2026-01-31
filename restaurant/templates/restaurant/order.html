@@ -1,0 +1,43 @@
+{% extends 'restaurant/base.html' %}
+{% block content %}
+
+<h1>Z Kitchen Online Order</h1>
+
+<p>Daily Special: {{ special_name }} (${{ special_price }})</p>
+
+<form action="{% url 'confirmation' %}" method="post">
+  {% csrf_token %}
+
+  <h2>Menu</h2>
+
+  <p><input type="checkbox" name="item_xlb"> Xiaolongbao ($10)</p>
+  <p><input type="checkbox" name="item_dongpo"> Dongpo Pork ($16)</p>
+  <p><input type="checkbox" name="item_soup"> Clay Pot Soup ($9)</p>
+
+
+  <p><input type="checkbox" name="item_special">
+     Daily Special: {{ special_name }} (${{ special_price }})
+  </p>
+
+  <p><strong>Soup Options</strong></p>
+  <p>
+    <input type="checkbox" name="extra_tofu"> Add tofu (+$2)<br>
+    <input type="checkbox" name="extra_chicken"> Extra chicken (+$1)
+  </p>
+
+  
+  <input type="hidden" name="special_name" value="{{ special_name }}">
+  <input type="hidden" name="special_price" value="{{ special_price }}">
+
+  <h2>Special Instructions</h2>
+  <textarea name="instructions" rows="4" cols="50"></textarea>
+
+  <h2>Customer Info</h2>
+  <p>Name: <input type="text" name="customer_name"></p>
+  <p>Phone: <input type="text" name="customer_phone"></p>
+  <p>Email: <input type="text" name="customer_email"></p>
+
+  <p><input type="submit" value="Place Order"></p>
+</form>
+
+{% endblock %}
