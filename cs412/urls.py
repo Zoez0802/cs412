@@ -21,5 +21,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("hw/", include ("hw.urls")),
     path("formdata/", include ("formdata.urls")),
-    path("", include ("restaurant.urls")),#NEW
+    path("restaurant/", include ("restaurant.urls")),#NEW
 ]
