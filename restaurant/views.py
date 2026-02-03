@@ -41,7 +41,7 @@ def confirmation(request):
         customer_email = request.POST.get("customer_email", "")
         instructions = request.POST.get("instructions", "")
 
-        # 3 fixed menu items
+        # 3 fixed menu items， and corresponding prices calculation
         if request.POST.get("item_xlb"):
             ordered_items.append("Xiaolongbao ($10)")
             total = total + 10
