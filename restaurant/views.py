@@ -4,30 +4,24 @@ import time
 
 
 def main(request):
-    '''Show the main restaurant page.'''
+    '''main restaurant page.'''
     template_name = "restaurant/main.html"
     return render(request, template_name)
 
 
 def order(request):
-    '''Show the order form page, including a random daily special.'''
+    '''order form page, including a random daily special.'''
     template_name = "restaurant/order.html"
 
-    specials = [
-        ["Milk Tea", 6],
-        ["Sweet and Sour Crispy Pork", 13],
-    ]
+    specials = [["Milk Tea", 6], ["Sweet and Sour Crispy Pork", 13],]
     daily_special = random.choice(specials)
 
-    context = {
-        "special_name": daily_special[0],
-        "special_price": daily_special[1],
-    }
+    context = { "special_name": daily_special[0], "special_price": daily_special[1],}
     return render(request, template_name, context)
 
 
 def confirmation(request):
-    '''Process the order form submission and display confirmation.'''
+    '''Process the order form submission and show confirmation.'''
     template_name = "restaurant/confirmation.html"
 
     ordered_items = []
@@ -41,7 +35,7 @@ def confirmation(request):
         customer_email = request.POST.get("customer_email", "")
         instructions = request.POST.get("instructions", "")
 
-        # 3 fixed menu items， and corresponding prices calculation
+        # 3 fixed menu items，and corresponding prices calculation
         if request.POST.get("item_xlb"):
             ordered_items.append("Xiaolongbao ($10)")
             total = total + 10
@@ -64,7 +58,7 @@ def confirmation(request):
             total = total + 1
 
 
-        # Daily special， item display randomly
+        # Daily special，item display randomly
         if request.POST.get("item_special"):
             special_name = request.POST.get("special_name", "Daily Special")
             special_price = request.POST.get("special_price", "0")
