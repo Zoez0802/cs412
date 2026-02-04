@@ -30,6 +30,7 @@ def confirmation(request):
 
     if request.POST:
 
+        # I use request.POST.get() instead of request.POST[] to avoid error if a form field is missing or unchecked
         customer_name = request.POST.get("customer_name", "")
         customer_phone = request.POST.get("customer_phone", "")
         customer_email = request.POST.get("customer_email", "")
