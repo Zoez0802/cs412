@@ -36,6 +36,18 @@ def confirmation(request):
         customer_email = request.POST.get("customer_email", "")
         instructions = request.POST.get("instructions", "")
 
+
+     # NEW: required fields check (must have name/phone/email)
+        if customer_name == "" or customer_phone == "" or customer_email == "":
+            template_name = "restaurant/order.html"
+            context = {                     
+                "error": "Please enter your name, phone, and email before placing an order.",
+                "special_name": request.POST.get("special_name", "Daily Special"),
+                "special_price": request.POST.get("special_price", "0"),
+            }
+            return render(request, template_name, context)
+
+
         # 3 fixed menu items，and corresponding prices calculation
         if request.POST.get("item_xlb"):
             ordered_items.append("Xiaolongbao ($10)")
@@ -45,16 +57,36 @@ def confirmation(request):
             ordered_items.append("Dongpo Pork ($16)")
             total = total + 16
 
+        soup_ordered = False 
         if request.POST.get("item_soup"):
+            soup_ordered = True   
             ordered_items.append("Clay Pot Soup ($9)")
             total = total + 9
 
         # Extra options for soup
         if request.POST.get("extra_tofu"):
+            # NEW:block extras unless soup ordered
+            if not soup_ordered:
+                template_name = "restaurant/order.html" 
+                context = {
+                    "error": "You can only add soup extras if you order Clay Pot Soup.",
+                    "special_name": request.POST.get("special_name", "Daily Special"),
+                    "special_price": request.POST.get("special_price", "0"),
+                }
+                return render(request, template_name, context)
             ordered_items.append(" - Add tofu (+$2)")
             total = total + 2
 
         if request.POST.get("extra_chicken"):
+            # NEW: block extras unless soup ordered
+            if not soup_ordered:     
+                template_name = "restaurant/order.html"
+                context = {   
+                    "error": "You can only add soup extras if you order Clay Pot Soup!",
+                    "special_name": request.POST.get("special_name", "Daily Special"),
+                    "special_price": request.POST.get("special_price", "0"),
+                }
+                return render(request, template_name, context)
             ordered_items.append(" - Extra chicken (+$1)")
             total = total + 1
 

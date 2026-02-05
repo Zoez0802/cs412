@@ -5,6 +5,11 @@
 
 <p>Daily Special: {{ special_name }} (${{ special_price }})</p>
 
+<!-- NEW: show error message from confirmation view -->
+{% if error %}
+  <p style="color:red;">{{ error }}</p>
+{% endif %}
+
 <form action="{% url 'confirmation' %}" method="post">
   {% csrf_token %}
 
