@@ -1,0 +1,27 @@
+{% extends "mini_insta/base.html" %}
+
+{% block content %}
+
+<h2>{{ profile.display_name }}</h2>
+<div><strong>@{{ profile.username }}</strong></div>
+
+{% if profile.profile_image_url %}
+<div>
+  <img src="{{ profile.profile_image_url }}" alt="{{ profile.profile_image_url }}" width="300">
+</div>
+{% endif %}
+
+<div>
+  <p><strong>Bio:</strong> {{ profile.bio_text }}</p>
+  <p><strong>Join Date:</strong> {{ profile.join_date }}</p>
+</div>
+
+<hr>
+
+<div>
+  <p><strong>Followers:</strong> (placeholder)</p>
+  <p><strong>Following:</strong> (placeholder)</p>
+  <p><strong>Posts:</strong> (placeholder)</p>
+</div>
+
+{% endblock %}

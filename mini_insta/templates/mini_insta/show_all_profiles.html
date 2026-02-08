@@ -1,20 +1,23 @@
 {% extends "mini_insta/base.html" %}
 
 {% block content %}
+
 <h2>Showing all Profiles</h2>
 
 <div>
   {% for p in profiles %}
   <div>
-    
+
     {% if p.profile_image_url %}
-    <div>
+    <a href="{% url 'show_profile' p.pk %}">
       <img src="{{ p.profile_image_url }}" alt="{{ p.profile_image_url }}" width="150">
-    </div>
+    </a>
     {% endif %}
-    
+
     <div>
-      <strong>{{ p.username }}</strong>
+      <a href="{% url 'show_profile' p.pk %}">
+        <strong>{{ p.username }}</strong>
+      </a>
     </div>
 
     <div>
@@ -22,7 +25,9 @@
     </div>
 
   </div>
+
   <hr>
+
   {% endfor %}
 </div>
 
