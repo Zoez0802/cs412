@@ -2,26 +2,53 @@
 
 {% block content %}
 
-<h2>{{ profile.display_name }}</h2>
-<div><strong>@{{ profile.username }}</strong></div>
+<div class="card">
 
-{% if profile.profile_image_url %}
-<div>
-  <img src="{{ profile.profile_image_url }}" alt="{{ profile.profile_image_url }}" width="300">
-</div>
-{% endif %}
+  <div class="top">
+    <div class="avatar">
+      {% if profile.profile_image_url %}
+        <img class="avatar-img" src="{{ profile.profile_image_url }}" alt="profile image">
+      {% endif %}
+    </div>
 
-<div>
-  <p><strong>Bio:</strong> {{ profile.bio_text }}</p>
-  <p><strong>Join Date:</strong> {{ profile.join_date }}</p>
-</div>
+    <div class="info">
+      <div class="names">
+        <div class="display">{{ profile.display_name }}</div>
+        <div class="handle">@{{ profile.username }}</div>
+      </div>
 
-<hr>
+      {% if profile.bio_text %}
+        <div class="bio">{{ profile.bio_text }}</div>
+      {% endif %}
 
-<div>
-  <p><strong>Followers:</strong> (placeholder)</p>
-  <p><strong>Following:</strong> (placeholder)</p>
-  <p><strong>Posts:</strong> (placeholder)</p>
+      <div class="joined">
+        Joined {{ profile.join_date }}
+      </div>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <strong>Followers</strong>
+      <div>coming soon</div>
+    </div>
+
+    <div class="stat">
+      <strong>Following</strong>
+      <div>coming soon</div>
+    </div>
+
+    <div class="stat">
+      <strong>Posts</strong>
+      <div>coming soon</div>
+    </div>
+  </div>
+
+  <div class="posts">
+    <div class="section-title">Posts</div>
+    <div>This is where their posts will show up later.</div>
+  </div>
+
 </div>
 
 {% endblock %}

@@ -2,32 +2,15 @@
 
 {% block content %}
 
-<h2>Showing all Profiles</h2>
 
-<div>
+<div class="profiles-grid">
   {% for p in profiles %}
-  <div>
-
     {% if p.profile_image_url %}
-    <a href="{% url 'show_profile' p.pk %}">
-      <img src="{{ p.profile_image_url }}" alt="{{ p.profile_image_url }}" width="150">
-    </a>
-    {% endif %}
-
-    <div>
-      <a href="{% url 'show_profile' p.pk %}">
-        <strong>{{ p.username }}</strong>
+<!-- i change this to a profile grid and do not display name -->
+      <a class="profile-tile" href="{% url 'show_profile' p.pk %}">
+        <img class="profile-img" src="{{ p.profile_image_url }}" alt="{{ p.profile_image_url }}">
       </a>
-    </div>
-
-    <div>
-      {{ p.display_name }}
-    </div>
-
-  </div>
-
-  <hr>
-
+    {% endif %}
   {% endfor %}
 </div>
 
