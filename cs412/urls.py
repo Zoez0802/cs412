@@ -21,5 +21,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("hw/", include ("hw.urls")),
     path("formdata/", include ("formdata.urls")),
-    path("restaurant/", include ("restaurant.urls")),#NEW
+    path("restaurant/", include ("restaurant.urls")),
+    path("blog/", include ("blog.urls")), # new app
 ]
