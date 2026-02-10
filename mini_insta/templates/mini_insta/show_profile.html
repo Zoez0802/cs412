@@ -13,12 +13,18 @@
 
     <div class="info">
       <div class="names">
-        <div class="display">{{ profile.display_name }}</div>
-        <div class="handle">@{{ profile.username }}</div>
+        <div class="display">
+          {{ profile.display_name }}
+        </div>
+        <div class="handle">
+          @{{ profile.username }}
+        </div>
       </div>
 
       {% if profile.bio_text %}
-        <div class="bio">{{ profile.bio_text }}</div>
+        <div class="bio">
+          {{ profile.bio_text }}
+        </div>
       {% endif %}
 
       <div class="joined">
