@@ -1,3 +1,6 @@
+# mini_insta/views.py
+# This file defines the class-based views for the Mini-Insta application.
+
 from django.views.generic import ListView, DetailView
 from .models import Profile
 

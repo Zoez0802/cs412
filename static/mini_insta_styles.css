@@ -1,4 +1,11 @@
-/* mini_insta_styles.css */
+/* mini_insta/static/mini_insta_styles.css */
+/* 
+This file contains the CSS styling for the Mini-Insta app.
+It defines the layout and design for each profile and Home page. Including the header, profile grid,
+detail profile page, and overall site structure.
+*/
+
+
 
 body {
   font-family: Arial, sans-serif;

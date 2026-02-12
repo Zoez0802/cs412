@@ -1,3 +1,6 @@
+# mini_insta/urls.py
+# This file defines the URL patterns for the Mini-Insta application.
+
 from django.urls import path
 from .views import ProfileDetailView, ProfileListView
 
