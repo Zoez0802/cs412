@@ -1,4 +1,5 @@
 <!-- mini-insta/templates/mini-insta/base.html -->
+<!-- Author: Minjie Zuo (minjiez@bu.edu), 2/11/2026 -->
 <!--This is the base template that all other templates will extend. It defines the overall structure of the page, including the header, main content area, and footer.-->
 
 
@@ -8,10 +9,12 @@
 <html>
   <head>
     <title>Mini - Insta</title>
+    <!-- Link external CSS file-->
     <link rel="stylesheet" href="{% static 'mini_insta_styles.css' %}">
   </head>
 
   <body>
+     <!-- Header section: displays site title and navigation link -->
     <header class="site-header">
       <div class="header-inner">
         <div class="logo">Mini - Insta</div>
@@ -24,7 +27,7 @@
       {% endblock %}
     </main>
 
-    <!--Add a link back to the ShowProfileListView-->
+    <!--Add a link back to the ShowProfileListView as footer-->
     <footer class="site-footer">
       <a class="footer-link" href="{% url 'show_all_profiles' %}">Back to all profiles</a>
     </footer>

@@ -1,5 +1,6 @@
 <!-- mini_insta/templates/mini_insta/show_all_profiles.html -->
 <!--
+Author: Minjie Zuo (minjiez@bu.edu), 2/11/2026
 This template extends the base template and displays all profiles in a grid layout.
 Each profile image links to its corresponding detail page (show_profile view).
 -->
@@ -14,6 +15,8 @@ Each profile image links to its corresponding detail page (show_profile view).
   {% for p in profiles %}
     {% if p.profile_image_url %}
 <!-- i change this to a profile grid and do not display name -->
+      
+    <!-- Wrap each image inside a link so clicking the image-->
       <a class="profile-tile" href="{% url 'show_profile' p.pk %}">
         <img class="profile-img" src="{{ p.profile_image_url }}" alt="{{ p.profile_image_url }}">
       </a>

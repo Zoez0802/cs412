@@ -1,18 +1,19 @@
 /* mini_insta/static/mini_insta_styles.css */
 /* 
+Author: Minjie Zuo (minjiez@bu.edu), 2/11/2026
 This file contains the CSS styling for the Mini-Insta app.
-It defines the layout and design for each profile and Home page. Including the header, profile grid,
-detail profile page, and overall site structure.
+It defines the layout and design for each profile and Home page. 
 */
 
 
-
+/* Global styles */
 body {
   font-family: Arial, sans-serif;
   margin: 0;
   background: #fafafa;
 }
 
+/*header and nav styles*/
 .site-header {
   position: sticky;
   top: 0;
@@ -41,12 +42,15 @@ body {
   font-weight: 600;
 }
 
+
+/* Home page styles */
 .page {
   max-width: 980px;
   margin: 0 auto;
   padding: 22px 18px 36px 18px;
 }
 
+/* Profile grid styles, show all profile as clickable square */
 .profiles-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -68,7 +72,7 @@ body {
 }
 
 
-
+/*style footer*/
 .site-footer {
   max-width: 980px;
   margin: 0 auto;
@@ -98,7 +102,7 @@ body {
   display: block;
 }
 
-/* detail page */
+/* detail inner page */
 
 .card {
   background: white;
@@ -147,6 +151,7 @@ body {
   color: #8e8e8e;
 }
 
+/*for each stats in the person's profile*/
 .stats {
   display: flex;
   gap: 16px;

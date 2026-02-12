@@ -1,5 +1,6 @@
 <!-- mini_insta/templates/mini_insta/show_profile.html -->
 <!--
+Author: Minjie Zuo (minjiez@bu.edu), 2/11/2026
 This template extends the base template and displays the details
 for a single profile for a specific person. It shows the profile image, display name,
 username, bio, join date, and give it a placeholder for followers, following, and posts.
@@ -14,7 +15,7 @@ username, bio, join date, and give it a placeholder for followers, following, an
 
   <div class="top">
     <div class="avatar">
-      {% if profile.profile_image_url %}
+      {% if profile.profile_image_url %} <!-- only display the image if the URL is not empty -->
         <img class="avatar-img" src="{{ profile.profile_image_url }}" alt="profile image">
       {% endif %}
     </div>
@@ -41,6 +42,7 @@ username, bio, join date, and give it a placeholder for followers, following, an
     </div>
   </div>
 
+   <!-- Statistics section, use placeholders-->
   <div class="stats">
     <div class="stat">
       <strong>Followers</strong>
