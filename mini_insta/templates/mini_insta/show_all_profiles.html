@@ -10,18 +10,25 @@ Each profile image links to its corresponding detail page (show_profile view).
 
 {% block content %}
 
-
 <div class="profiles-grid">
   {% for p in profiles %}
     {% if p.profile_image_url %}
-<!-- i change this to a profile grid and do not display name -->
-      
-    <!-- Wrap each image inside a link so clicking the image-->
+
       <a class="profile-tile" href="{% url 'show_profile' p.pk %}">
-        <img class="profile-img" src="{{ p.profile_image_url }}" alt="{{ p.profile_image_url }}">
+        
+        <div class="profile-display-name">{{ p.display_name }}</div>
+        <div class="profile-username">{{ p.username }}</div>
+
+
+        <img class="profile-img"
+             src="{{ p.profile_image_url }}"
+             alt="{{ p.profile_image_url }}">
+
       </a>
+
     {% endif %}
   {% endfor %}
 </div>
 
 {% endblock %}
+
