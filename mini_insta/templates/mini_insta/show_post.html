@@ -6,7 +6,7 @@ associated with that Post.
 -->
 
 {% extends "mini_insta/base.html" %}
-
+{% load static %}<!--for no image-->
 {% block content %}
 
 <div class="card">
@@ -18,16 +18,16 @@ associated with that Post.
 
   <div class="post-time">{{ post.timestamp }}</div>
 
-  <!-- All photos for this post -->
   <div class="post-photos-grid">
 
+  <div class="post-card">
     {% for photo in post.get_all_photos %}
-      <img class="post-img" src="{{ photo.image_url }}" alt="post photo">
-    {% empty %}
-      <img class="post-img"
-           src="https://via.placeholder.com/600x600?text=No+Image"
-           alt="no image available">
+        <img class="post-img" src="{{ photo.image_url }}" alt="post image">
+    {% empty %} <!--use empty here because i used a for loop, function like 'else'-->
+        <img class="post-img img-placeholder" src="{% static 'no_image.png' %}" alt="no image available">
     {% endfor %}
+
+  </div>
 
   </div>
 

@@ -1,0 +1,43 @@
+<!-- mini_insta/templates/mini_insta/create_post_form.html -->
+<!--
+Author: Minjie Zuo (minjiez@bu.edu), 2/18/2026
+Render the form for creating a new Post. Includes an extra HTML field for image_url so we can create one Photo per Post.
+-->
+
+{% extends "mini_insta/base.html" %}
+
+{% block content %}
+
+<div class="form-card">
+
+  <!-- Page title -->
+  <div class="form-title">
+    @{{ profile.username }}: Create a Post
+  </div>
+
+<form method="POST"> <!--define form tag-->
+  {% csrf_token %}<!--include the django-created csrf_token as a form field-->
+
+  <!-- Caption -->
+  <div>
+    <label for="id_caption">Caption:</label>
+    {{ form.caption }}
+  </div>
+
+  <br>
+
+  <div>
+    <label for="id_image_url">Image URL:</label><br>
+    <input type="url" name="image_url" id="id_image_url">
+  </div>
+
+  <br>
+
+  <!--provide a submit button and a cancel button-->
+  <button type="submit">Post</button>
+
+  <!-- Cancel: go back to the profile page -->
+  <a href="{% url 'show_profile' profile.pk %}">Cancel</a>
+</form>
+
+{% endblock %}

@@ -7,6 +7,7 @@ for a single profile for a specific person.
 
 
 {% extends "mini_insta/base.html" %}
+{% load static %}
 
 {% block content %}
 
@@ -72,13 +73,13 @@ for a single profile for a specific person.
       <div class="post-card">
         <!-- Link to the Post detail page -->
         <a href="{% url 'show_post' post.pk %}">
-          {% with photos=post.get_all_photos %}
-            {% if photos %}
-              <img class="post-img" src="{{ photos.0.image_url }}" alt="post image">
-            {% else %}
-              <img class="post-img" src="https://via.placeholder.com/600x600?text=No+Image" alt="no image available">
-            {% endif %}
-          {% endwith %}
+        {% if post.get_first_photo %}
+          <img class="post-img" src="{{ post.get_first_photo.image_url }}" alt="post image">
+        {% else %}
+          <img class="post-img img-placeholder" src="{% static 'no_image.png' %}" alt="no image available">
+        {% endif %}
+
+        
         </a>
 
         {% if post.caption %}

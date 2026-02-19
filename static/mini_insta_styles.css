@@ -204,3 +204,32 @@ body {
   font-size: 13px;
   color: #8e8e8e;
 }
+
+/* Create Post form styles */
+.form-card {
+  background: white;
+  border: 1px solid #dbdbdb;
+  padding: 18px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.form-title {
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+
+
+/* Footer nav spacing */
+.footer-nav {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+/* Style for placeholder image when no photo exists */
+.img-placeholder{
+  max-width: 200px;
+  opacity: 0.7;
+}

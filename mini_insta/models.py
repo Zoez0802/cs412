@@ -1,4 +1,6 @@
 from django.db import models
+from django.urls import reverse
+
 
 class Profile(models.Model):
     username = models.TextField(blank=False)
@@ -23,7 +25,7 @@ class Post(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
     caption = models.TextField(blank=True)
-
+    
     def __str__(self):
         """Return a string representation of this Post."""
         return f'Post by {self.profile.username} at {self.timestamp}'
@@ -33,6 +35,18 @@ class Post(models.Model):
         """Return a QuerySet of all Photos for this Post"""
         return Photo.objects.filter(post=self).order_by("timestamp")
 
+    # let CreateView to redirect to the Post detail page after successfully creating a new Post.
+    def get_absolute_url(self):
+        '''Return the URL to display this Post.'''
+        return reverse('show_post', kwargs={'pk': self.pk})
+    
+    #I decided to def this extra to display the first photo of the post
+    def get_first_photo(self):
+        photos = Photo.objects.filter(post=self).order_by('timestamp')
+        if photos:
+            return photos[0]
+        return None
+
 # task 1.2
 class Photo(models.Model):
     """Encapsulate the data for one image associated with a Post."""
@@ -41,6 +55,7 @@ class Photo(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     image_url = models.URLField(blank=False)
     timestamp = models.DateTimeField(auto_now_add=True)
+    
 
     def __str__(self):
         """Return a string representation of this Photo."""
