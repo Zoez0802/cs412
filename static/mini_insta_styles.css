@@ -170,7 +170,37 @@ body {
   margin-top: 18px;
 }
 
+
 .section-title {
   font-weight: 700;
   margin-bottom: 6px;
+}
+
+/* Post section styling */
+/* Keep each post neatly stacked and prevent images from overflowing. */
+.post-card {
+  margin-top: 14px;
+  border: 1px solid #eee;
+  background: #fafafa;
+  padding: 12px;
+}
+
+.post-img {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  border: 1px solid #eee;
+}
+
+.post-caption {
+  margin-top: 8px;
+}
+
+/* Post timestamp: smaller and grey */
+.post-time {
+  margin-top: 6px;
+  font-size: 13px;
+  color: #8e8e8e;
 }

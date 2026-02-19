@@ -55,14 +55,50 @@ for a single profile for a specific person.
 
     <div class="stat">
       <strong>Posts</strong>
-      <div>coming soon</div>
+      <!-- Display the number of Posts for this Profile -->
+      <div>{{ profile.get_all_posts|length }}</div>
     </div>
-  </div>
+   </div>
 
+
+  <!-- Posts section -->
+  <!-- Loop through all Posts associated with this Profile -->
   <div class="posts">
     <div class="section-title">Posts</div>
-    <div>This is where their posts will show up later.</div>
+
+    {% for post in profile.get_all_posts %}
+      <!-- Display a single Post -->
+      <!--task 1.5-->
+      <div class="post-card">
+        <!-- Link to the Post detail page -->
+        <a href="{% url 'show_post' post.pk %}">
+          {% with photos=post.get_all_photos %}
+            {% if photos %}
+              <img class="post-img" src="{{ photos.0.image_url }}" alt="post image">
+            {% else %}
+              <img class="post-img" src="https://via.placeholder.com/600x600?text=No+Image" alt="no image available">
+            {% endif %}
+          {% endwith %}
+        </a>
+
+        {% if post.caption %}
+          <div class="post-caption">
+            {{ post.caption }}
+          </div>
+        {% endif %}
+
+        <div class="post-time">
+          {{ post.timestamp }}
+        </div>
+
+      </div>
+
+    {% empty %}
+      <div>No posts yet.</div>
+    {% endfor %}
+
   </div>
+
 
 </div>
 

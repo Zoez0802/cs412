@@ -1,0 +1,36 @@
+<!-- mini_insta/templates/mini_insta/show_post.html -->
+<!--
+Author: Minjie Zuo (minjiez@bu.edu), 2/19/2026
+This template displays one Post (caption + timestamp) and all Photos
+associated with that Post.
+-->
+
+{% extends "mini_insta/base.html" %}
+
+{% block content %}
+
+<div class="card">
+
+  <!-- Post meta -->
+  {% if post.caption %}
+    <div class="post-caption">{{ post.caption }}</div>
+  {% endif %}
+
+  <div class="post-time">{{ post.timestamp }}</div>
+
+  <!-- All photos for this post -->
+  <div class="post-photos-grid">
+
+    {% for photo in post.get_all_photos %}
+      <img class="post-img" src="{{ photo.image_url }}" alt="post photo">
+    {% empty %}
+      <img class="post-img"
+           src="https://via.placeholder.com/600x600?text=No+Image"
+           alt="no image available">
+    {% endfor %}
+
+  </div>
+
+</div>
+
+{% endblock %}
