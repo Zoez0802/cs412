@@ -130,9 +130,11 @@ STATICFILES_DIRS=[
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 MEDIA_URL= "media/"  # note: no leading slash!
 
+
 import socket
 CS_DEPLOYMENT_HOSTNAME = 'cs-webapps.bu.edu'
 
 if socket.gethostname() == CS_DEPLOYMENT_HOSTNAME:
     STATIC_URL = '/minjiez/static/'
     MEDIA_URL = '/minjiez/media/'
+
