@@ -2,7 +2,7 @@
 # Author: Minjie Zuo (minjiez@bu.edu), 2/11/2026 , 2/18/2026
 # This file defines the class-based views for the Mini-Insta application.
 
-from django.views.generic import DetailView, ListView, CreateView, UpdateView
+from django.views.generic import DetailView, ListView, CreateView, UpdateView, DeleteView, UpdateView
 from django.urls import reverse
 from .models import Profile, Post, Photo
 from .forms import CreatePostForm, UpdateProfileForm
@@ -72,3 +72,43 @@ class UpdateProfileView(UpdateView):
     model = Profile
     form_class = UpdateProfileForm
     template_name = "mini_insta/update_profile_form.html"
+
+
+class DeletePostView(DeleteView):
+    '''Display and process a form to delete an Post.'''
+
+    model = Post
+    template_name = "mini_insta/delete_post_form.html"
+
+    def get_context_data(self, **kwargs):
+        '''Add the Post and the Profile to the template context.'''
+        context=super().get_context_data(**kwargs)
+
+        post = self.get_object()
+        context['post']= post
+        context['profile'] =post.profile
+
+        return context
+
+    def get_success_url(self):
+        '''Redirect to the Profile page after successful delete.'''
+        post = self.get_object()
+        return reverse('show_profile', kwargs={'pk': post.profile.pk})
+
+
+class UpdatePostView(UpdateView):
+    '''Display and process a form to update Post.'''
+
+    model = Post
+    fields = ['caption']
+    template_name = "mini_insta/update_post_form.html"
+
+    def get_success_url(self):
+        '''Redirect back to the Post page after successful update.'''
+        return reverse('show_post', kwargs={'pk': self.object.pk})
+    
+    def get_context_data(self, **kwargs):
+        '''Add the Post to the template context.'''
+        context = super().get_context_data(**kwargs)
+        context['post'] = self.get_object()
+        return context

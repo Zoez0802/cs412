@@ -1,6 +1,6 @@
 <!-- mini_insta/templates/mini_insta/show_post.html -->
 <!--
-Author: Minjie Zuo (minjiez@bu.edu), 2/19/2026
+Author: Minjie Zuo (minjiez@bu.edu), 2/19/2026, 2/24/2026
 This template displays one Post (caption + timestamp) and all Photos
 associated with that Post.
 -->
@@ -8,6 +8,7 @@ associated with that Post.
 {% extends "mini_insta/base.html" %}
 {% load static %}<!--for no image-->
 {% block content %}
+
 
 <div class="card">
 
@@ -30,7 +31,8 @@ associated with that Post.
   </div>
 
   </div>
-
+  <a class="update-btn" href="{% url 'delete_post' post.pk %}">Delete Post</a>
+  <a class="update-btn" href="{% url 'update_post' post.pk %}">Update Post</a>
 </div>
 
 {% endblock %}

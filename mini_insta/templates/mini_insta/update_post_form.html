@@ -1,0 +1,34 @@
+<!-- mini_insta/templates/mini_insta/update_post_form.html -->
+<!--
+Author: Minjie Zuo (minjiez@bu.edu), 2/27/2026
+Render a form to update an existing Post.
+-->
+
+{% extends "mini_insta/base.html" %}
+
+{% block content %}
+
+<div class="form-card">
+  <div class="form-title">Update Post</div>
+
+  <form method="POST">
+    {% csrf_token %}
+
+    <div>
+      <label for="id_caption">Caption:</label><br>
+      {{ form.caption }}
+    </div>
+
+    <br>
+
+    <button type="submit">Update</button>
+  </form>
+
+  <!-- Cancel: go back to the post page -->
+  <form method="GET" action="{% url 'show_post' post.pk %}">
+    <button type="submit">Cancel</button>
+  </form>
+
+</div>
+
+{% endblock %}
