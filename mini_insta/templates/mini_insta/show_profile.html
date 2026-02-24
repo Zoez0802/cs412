@@ -74,7 +74,7 @@ for a single profile for a specific person.
         <!-- Link to the Post detail page -->
         <a href="{% url 'show_post' post.pk %}">
         {% if post.get_first_photo %}
-          <img class="post-img" src="{{ post.get_first_photo.image_url }}" alt="post image">
+          <img class="post-img" src="{{ post.get_first_photo.get_image_url }}" alt="post image">
         {% else %}
           <img class="post-img img-placeholder" src="{% static 'no_image.png' %}" alt="no image available">
         {% endif %}

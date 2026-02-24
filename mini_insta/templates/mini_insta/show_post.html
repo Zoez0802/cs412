@@ -22,7 +22,7 @@ associated with that Post.
 
   <div class="post-card">
     {% for photo in post.get_all_photos %}
-        <img class="post-img" src="{{ photo.image_url }}" alt="post image">
+        <img class="post-img" src="{{ photo.get_image_url }}" alt="post image">
     {% empty %} <!--use empty here because i used a for loop, function like 'else'-->
         <img class="post-img img-placeholder" src="{% static 'no_image.png' %}" alt="no image available">
     {% endfor %}
