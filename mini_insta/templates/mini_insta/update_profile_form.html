@@ -1,0 +1,53 @@
+<!-- mini_insta/templates/mini_insta/update_profile_form.html -->
+<!--
+Author: Minjie Zuo (minjiez@bu.edu), 2/27/2026
+Render the form for updating an existing Profile.
+-->
+
+{% extends "mini_insta/base.html" %}
+
+{% block content %}
+
+<div class="form-card">
+
+  <!-- Page title -->
+  <div class="form-title">
+    @{{ object.username }}: Update Profile
+  </div>
+
+  <form method="POST">
+    {% csrf_token %}
+
+    <!-- Display Name -->
+    <div>
+      <label for="id_display_name">Display Name</label><br>
+      {{ form.display_name }}
+    </div>
+
+    <br>
+    <!-- Bio Text -->
+    <div>
+      <label for="id_bio_text">Bio Text</label><br>
+      {{ form.bio_text }}
+    </div>
+
+    <br>
+
+    <!-- Profile Image URL -->
+    <div>
+      <label for="id_profile_image_url">Profile Image URL</label><br>
+      {{ form.profile_image_url }}
+    </div>
+
+    <br>
+    <!-- Submit and Cancel button -->
+    <button type="submit">Update</button>
+
+    <!-- Cancel: go back to profile page -->
+    <a href="{% url 'show_profile' object.pk %}">Cancel</a>
+
+  </form>
+
+</div>
+
+{% endblock %}

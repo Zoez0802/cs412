@@ -59,6 +59,9 @@ for a single profile for a specific person.
       <!-- Display the number of Posts for this Profile -->
       <div>{{ profile.get_all_posts|length }}</div>
     </div>
+
+    <a class="update-btn" href="{% url 'update_profile' profile.pk %}"> Update Profile </a>
+
    </div>
 
 

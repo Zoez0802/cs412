@@ -2,10 +2,10 @@
 # Author: Minjie Zuo (minjiez@bu.edu), 2/11/2026 , 2/18/2026
 # This file defines the class-based views for the Mini-Insta application.
 
-from django.views.generic import DetailView, ListView, CreateView
+from django.views.generic import DetailView, ListView, CreateView, UpdateView
 from django.urls import reverse
 from .models import Profile, Post, Photo
-from .forms import CreatePostForm
+from .forms import CreatePostForm, UpdateProfileForm
 
 
 class ProfileListView(ListView):
@@ -65,3 +65,10 @@ class CreatePostView(CreateView):
             Photo.objects.create(post=self.object, image_file=file)
 
         return response
+    
+class UpdateProfileView(UpdateView):
+    '''Display and process a form to update an existing Profile.'''
+
+    model = Profile
+    form_class = UpdateProfileForm
+    template_name = "mini_insta/update_profile_form.html"

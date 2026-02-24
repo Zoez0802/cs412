@@ -18,6 +18,12 @@ class Profile(models.Model):
         return Post.objects.filter(profile=self).order_by("-timestamp")
 
 
+    def get_absolute_url(self):
+        '''Return the URL to display this Profile.'''
+        return reverse('show_profile', kwargs={'pk': self.pk})
+
+
+
 class Post(models.Model):
     """Encapsulate the data for one Instagram-style post."""
 
