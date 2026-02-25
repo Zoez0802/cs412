@@ -1,0 +1,27 @@
+<!-- mini_insta/templates/mini_insta/show_following.html -->
+
+<!--
+Author: Minjie Zuo (minjiez@bu.edu),  2/24/2026
+The show_following.html template displays the profiles that a given profile is following. It is rendered when the user clicks the "Following" link on the show_profile page. It shows the display name and username of each followed profile, and each name links to their profile page.
+!-->
+
+{% extends "mini_insta/base.html" %}
+
+{% block content %}
+
+<div class="card">
+  <h2>@{{ profile.username }} Following</h2>
+
+  {% for p in profile.get_following %}
+    <div>
+      <a href="{% url 'show_profile' p.pk %}">
+        {{ p.display_name }} (@{{ p.username }})
+      </a>
+    </div>
+  {% empty %}
+    <div>Not following anyone yet.</div>
+  {% endfor %}
+
+</div>
+
+{% endblock %}

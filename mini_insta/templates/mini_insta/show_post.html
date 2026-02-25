@@ -12,6 +12,20 @@ associated with that Post.
 
 <div class="card">
 
+  
+  <!-- Likes -->
+  {% with likes=post.get_likes %}
+    <div class="post-likes">
+      {% if likes.count == 0 %}
+        Liked by 0 people
+      {% elif likes.count == 1 %}
+        Liked by @{{ likes.first.profile.username }}
+      {% else %}
+        Liked by @{{ likes.first.profile.username }} and {{ likes.count }} people
+      {% endif %}
+    </div>
+  {% endwith %}
+
   <!-- Post meta -->
   {% if post.caption %}
     <div class="post-caption">{{ post.caption }}</div>
@@ -28,6 +42,22 @@ associated with that Post.
         <img class="post-img img-placeholder" src="{% static 'no_image.png' %}" alt="no image available">
     {% endfor %}
 
+  </div>
+
+  <!-- Comments section -->
+  <div class="comments">
+    <div class="comments-title">Comments</div>
+
+    {% for c in post.get_all_comments %}
+      <div class="comment">
+        <div class="comment-meta">
+          <strong>@{{ c.profile.username }}</strong> · {{ c.timestamp }}
+        </div>
+        <div class="comment-text">{{ c.text }}</div>
+      </div>
+    {% empty %}
+      <div class="comment-empty">No comments yet.</div>
+    {% endfor %}
   </div>
 
   </div>

@@ -44,20 +44,24 @@ for a single profile for a specific person.
 
    <!-- Statistics section, use placeholders-->
   <div class="stats">
+
+    <div class="stat">
+      <strong>Posts</strong>
+      <div>{{ profile.get_all_posts.count }}</div>
+    </div>
+    
     <div class="stat">
       <strong>Followers</strong>
-      <div>coming soon</div>
+      <div>
+        <a href="{% url 'show_followers' profile.pk %}">{{ profile.get_num_followers }}</a>
+      </div>
     </div>
 
     <div class="stat">
       <strong>Following</strong>
-      <div>coming soon</div>
-    </div>
-
-    <div class="stat">
-      <strong>Posts</strong>
-      <!-- Display the number of Posts for this Profile -->
-      <div>{{ profile.get_all_posts|length }}</div>
+      <div>
+        <a href="{% url 'show_following' profile.pk %}">{{ profile.get_num_following }}</a>
+      </div>
     </div>
 
     <a class="update-btn" href="{% url 'update_profile' profile.pk %}"> Update Profile </a>

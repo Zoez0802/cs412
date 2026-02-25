@@ -112,3 +112,17 @@ class UpdatePostView(UpdateView):
         context = super().get_context_data(**kwargs)
         context['post'] = self.get_object()
         return context
+    
+
+class ShowFollowersDetailView(DetailView):
+    '''Display the followers for one Profile.'''
+    model = Profile
+    template_name = "mini_insta/show_followers.html"
+    context_object_name = "profile"
+
+
+class ShowFollowingDetailView(DetailView):
+    '''Display the profiles that this Profile is following.'''
+    model = Profile
+    template_name = "mini_insta/show_following.html"
+    context_object_name = "profile"

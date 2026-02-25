@@ -1,0 +1,27 @@
+<!-- mini_insta/templates/mini_insta/show_followers.html -->
+
+<!--
+Author: Minjie Zuo (minjiez@bu.edu),  2/24/2026
+This template displays the followers of a Profile. It is rendered when the user clicks the "Followers" link on the show_profile page. It shows the display name and username of each follower, and each follower's name links to their profile page.
+!-->
+
+{% extends "mini_insta/base.html" %}
+
+{% block content %}
+
+<div class="card">
+  <h2>@{{ profile.username }} Followers</h2>
+
+  {% for p in profile.get_followers %}
+    <div>
+      <a href="{% url 'show_profile' p.pk %}">
+        {{ p.display_name }} (@{{ p.username }})
+      </a>
+    </div>
+  {% empty %}
+    <div>No followers yet.</div>
+  {% endfor %}
+
+</div>
+
+{% endblock %}

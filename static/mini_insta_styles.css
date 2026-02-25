@@ -263,3 +263,39 @@ body {
 .update-btn:hover {
   opacity: 0.85;
 }
+
+/*Comments*/
+.comments {
+  margin-top: 16px;
+}
+
+.comments-title {
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.comment {
+  margin-bottom: 10px;
+}
+
+.comment-meta {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 2px;
+}
+
+.comment-text {
+  font-size: 14px;
+}
+
+.comment-empty {
+  color: #888;
+  font-size: 14px;
+}
+
+/*Like feature*/
+.post-likes {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
