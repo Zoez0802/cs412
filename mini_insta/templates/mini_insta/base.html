@@ -18,7 +18,9 @@
     <header class="site-header">
       <div class="header-inner">
         <div class="logo">Mini - Insta</div>
-        <a class="nav-link" href="{% url 'show_all_profiles' %}">Home</a>
+        {% if profile %}
+          <a class="nav-link" href="{% url 'show_all_profiles' %}">Home</a>
+        {% endif %}
       </div>
     </header>
 
@@ -27,14 +29,29 @@
       {% endblock %}
     </main>
 
-    <!--Add a link back to the ShowProfileListView as footer-->
+
     <footer class="site-footer">
-      <a class="footer-link" href="{% url 'show_all_profiles' %}">Back to all profiles</a>
-    
-     <!-- Only show Create Post link if a Profile exists in context -->
-      {% if profile %}    
-        <a class="footer-link" href="{% url 'create_post' profile.pk %}">Create Post</a>
+
+      {% if profile %}
+        <!-- Home Icon -->
+        <a class="footer-link" href="{% url 'show_feed' profile.pk %}">
+          <img class="nav-icon" src="{% static 'home.png' %}" alt="Home">
+        </a>
+
+        <!-- Profile Icon -->
+        <a class="footer-link" href="{% url 'show_profile' profile.pk %}">
+          <img class="nav-icon" src="{% static 'R.png' %}" alt="Profile">
+        </a>
+
+      
+          <!-- Create Post -->
+        <a class="nav-icon-link create-link" href="{% url 'create_post' profile.pk %}">
+          <img class="nav-icon create-icon" src="{% static 'plus.png' %}" alt="Create">
+        </a>
       {% endif %}
+
+
+    </footer>
     
     </footer>
   </body>

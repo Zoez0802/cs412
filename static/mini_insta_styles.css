@@ -299,3 +299,64 @@ body {
   font-weight: 500;
   margin-bottom: 6px;
 }
+
+
+/*for feed page adjustment*/
+.feed { 
+  display: grid; 
+  gap: 14px; 
+}
+
+.feed-title { 
+  font-weight: 600; 
+  margin-bottom: 6px; 
+}
+
+.feed-author-name { 
+  font-weight: 600;
+ }
+
+.feed-author { 
+  display: flex; 
+  gap: 10px; 
+  align-items: center; 
+  margin-bottom: 8px; 
+}
+
+.feed-avatar { 
+  width: 34px; 
+  height: 34px; 
+  border-radius: 999px; 
+  object-fit: cover; 
+}
+
+.feed-author-handle { 
+  color: #777; 
+  font-size: 13px; }
+
+.feed-photo { 
+  width: 100%; 
+  margin: 8px 0; 
+  border-radius: 10px; 
+  object-fit: cover; 
+
+}
+
+.feed-comments { margin-top: 8px; }
+
+
+/*for task 6.3 nav styling*/
+.site-footer {
+  display: flex;
+  justify-content: flex-start; /* make them move to left */
+  align-items: center;
+  gap: 18px; /* smaller space between icons */
+  padding: 12px 16px;    
+}
+
+.nav-icon {
+  width: 68px;
+  height: 68px;
+  object-fit: contain;
+  display: block;
+}

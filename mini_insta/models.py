@@ -51,6 +51,16 @@ class Profile(models.Model):
         """Return the number of profiles this profile is following (int)."""
         return Follow.objects.filter(follower_profile=self).count()
 
+#Task 6.1 - A5
+    def get_post_feed(self):
+        """Return a QuerySet of Posts from Profiles this user is following."""
+        follows = Follow.objects.filter(follower_profile=self)
+        followed_profiles = []
+        for f in follows:
+            followed_profiles.append(f.profile)
+
+        return Post.objects.filter(profile__in=followed_profiles).order_by("-timestamp")
+    
 
 class Post(models.Model):
     """Encapsulate the data for one Instagram-style post."""
