@@ -25,7 +25,7 @@ This template extends the base template and displays the feed for a specific pro
           <img class="feed-avatar" src="{{ post.profile.profile_image_url }}" alt="profile image">
         {% endif %}
         <div class="feed-author-text">
-          <div class="feed-author-name">{{ post.profile.display_name }}</div>
+          <div>{{ post.profile.display_name }}</div>
           <div class="feed-author-handle">@{{ post.profile.username }}</div>
         </div>
       </div>

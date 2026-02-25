@@ -312,16 +312,6 @@ body {
   margin-bottom: 6px; 
 }
 
-.feed-author-name { 
-  font-weight: 600;
- }
-
-.feed-author { 
-  display: flex; 
-  gap: 10px; 
-  align-items: center; 
-  margin-bottom: 8px; 
-}
 
 .feed-avatar { 
   width: 34px; 

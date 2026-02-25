@@ -1,0 +1,58 @@
+<!-- mini_insta/templates/mini_insta/search_results.html -->
+<!--
+Author: Minjie Zuo (minjiez@bu.edu)
+Show two result lists: matching Profiles and matching Posts.
+-->
+
+{% extends "mini_insta/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="card">
+
+  <div class="feed-header">
+    <a href="{% url 'search' profile.pk %}">← New Search</a>
+  </div>
+
+  <div class="section-title">
+    Results for "{{ query }}"
+  </div>
+
+  <h3>Matching Profiles</h3>
+  {% for p in profiles %}
+    <div>
+      <a href="{% url 'show_profile' p.pk %}">
+        {{ p.display_name }} (@{{ p.username }})
+      </a>
+    </div>
+  {% empty %}
+    <div>No matching profiles.</div>
+  {% endfor %}
+
+  <br>
+
+  <h3>Matching Posts</h3>
+  {% for post in posts %}
+    <div class="post-card">
+      <a href="{% url 'show_post' post.pk %}">
+        {% if post.get_first_photo %}
+          <img class="post-img" src="{{ post.get_first_photo.get_image_url }}" alt="post image">
+        {% else %}
+          <img class="post-img img-placeholder" src="{% static 'no_image.png' %}" alt="no image available">
+        {% endif %}
+      </a>
+
+      {% if post.caption %}
+        <div class="post-caption">{{ post.caption }}</div>
+      {% endif %}
+
+      <div class="post-time">{{ post.timestamp }}</div>
+    </div>
+  {% empty %}
+    <div>No matching posts.</div>
+  {% endfor %}
+
+</div>
+
+{% endblock %}
