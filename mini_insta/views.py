@@ -25,7 +25,15 @@ class PostDetailView(DetailView):
     model = Post
     template_name = "mini_insta/show_post.html"
     context_object_name = "post"
-
+    
+    #i added this optionallly
+    # Add the Profile to the context so base.html can render the navigation.
+    # I want user to be able to cancel their action on update or delete post.
+    def get_context_data(self, **kwargs):
+            context = super().get_context_data(**kwargs)
+            post = self.get_object()
+            context["profile"] = post.profile
+            return context
 
 class CreatePostView(CreateView):
     '''Display and process the form to create a new Post for a given Profile.'''

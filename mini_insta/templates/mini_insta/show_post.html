@@ -63,6 +63,7 @@ associated with that Post.
   </div>
   <a class="update-btn" href="{% url 'delete_post' post.pk %}">Delete Post</a>
   <a class="update-btn" href="{% url 'update_post' post.pk %}">Update Post</a>
+  <a href="{% url 'show_profile' post.profile.pk %}">Cancel</a>
 </div>
 
 {% endblock %}
