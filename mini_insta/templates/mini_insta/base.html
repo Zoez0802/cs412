@@ -49,6 +49,11 @@
           <img class="nav-icon create-icon" src="{% static 'plus.png' %}" alt="Create">
         </a>
         
+        <!-- Search Icon -->
+         <a class="footer-link" href="{% url 'search' profile.pk %}">
+          <img class="nav-icon" src="{% static 'search.png' %}" alt="Search">
+        </a>
+
       {% endif %}
 
 
