@@ -64,8 +64,10 @@ for a single profile for a specific person.
       </div>
     </div>
 
-    <a class="update-btn" href="{% url 'update_profile' profile.pk %}"> Update Profile </a>
-   </div>
+    {% if request.user.is_authenticated and request.user == profile.user %}
+    <a class="update-btn" href="{% url 'update_profile'%}"> Update Profile </a>
+    {% endif %}
+  </div>
 
 
   <!-- Posts section -->

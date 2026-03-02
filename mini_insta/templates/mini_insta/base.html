@@ -18,47 +18,61 @@
     <header class="site-header">
       <div class="header-inner">
         <div class="logo">Mini - Insta</div>
-        {% if profile %}
+        {% if request.user.is_authenticated %}
           <a class="nav-link" href="{% url 'show_all_profiles' %}">Home</a>
         {% endif %}
       </div>
+
     </header>
 
+
+
+
     <main class="page">
-      {% block content %}
-      {% endblock %}
+    <div class="auth-status">
+      {% if request.user.is_authenticated %}
+        Logged in user: {{ request.user }}.
+        <form method="post" action="{% url 'logout' %}"  class="logout-form">
+          {% csrf_token %}
+          <button type="submit" class="nav-link">Logout</button>
+        </form>
+      {% else %}
+        Not logged in.
+      {% endif %}
+    </div>
+      
+    {% block content %}
+    {% endblock %}
     </main>
 
 
     <footer class="site-footer">
 
-      {% if profile %}
+      {% if request.user.is_authenticated and profile and request.user == profile.user %}
         <!-- Home Icon -->
-        <a class="footer-link" href="{% url 'show_feed' profile.pk %}">
+        <a class="footer-link" href="{% url 'show_feed'%}">
           <img class="nav-icon" src="{% static 'home.png' %}" alt="Home">
         </a>
 
         <!-- Profile Icon -->
-        <a class="footer-link" href="{% url 'show_profile' profile.pk %}">
+        <a class="footer-link" href="{% url 'profile' %}">
           <img class="nav-icon" src="{% static 'R.png' %}" alt="Profile">
         </a>
 
       
-          <!-- Create Post -->
-        <a class="nav-icon-link create-link" href="{% url 'create_post' profile.pk %}">
+        <!-- Create Post -->
+        <a class="nav-icon-link create-link" href="{% url 'create_post'%}">
           <img class="nav-icon create-icon" src="{% static 'plus.png' %}" alt="Create">
         </a>
         
         <!-- Search Icon -->
-         <a class="footer-link" href="{% url 'search' profile.pk %}">
+         <a class="footer-link" href="{% url 'search'%}">
           <img class="nav-icon" src="{% static 'search.png' %}" alt="Search">
         </a>
 
       {% endif %}
 
 
-    </footer>
-    
     </footer>
   </body>
 </html>

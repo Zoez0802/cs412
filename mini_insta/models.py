@@ -1,6 +1,10 @@
+# mini_insta/views.py
+# Author: Minjie Zuo (minjiez@bu.edu), 2/11/2026 , 2/18/2026， 3/2/2026
+# This file defines the class-based views
+
 from django.db import models
 from django.urls import reverse
-
+from django.contrib.auth.models import User   # NEW
 
 class Profile(models.Model):
     username = models.TextField(blank=False)
@@ -8,7 +12,8 @@ class Profile(models.Model):
     profile_image_url = models.URLField(blank=True)
     bio_text = models.TextField(blank=True)
     join_date = models.DateTimeField(auto_now=True)
-
+    user = models.ForeignKey(User, on_delete=models.CASCADE)  # NEW
+    
     def __str__(self):
         return f'{self.username}'
     

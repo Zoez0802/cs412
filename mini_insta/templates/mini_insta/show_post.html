@@ -61,10 +61,11 @@ associated with that Post.
   </div>
 
   </div>
+  {% if request.user.is_authenticated and request.user == post.profile.user %}
   <a class="update-btn" href="{% url 'delete_post' post.pk %}">Delete Post</a>
   <a class="update-btn" href="{% url 'update_post' post.pk %}">Update Post</a>
   <a href="{% url 'show_profile' post.profile.pk %}">Cancel</a>
-
+  {% endif %}
 </div>
 
 {% endblock %}

@@ -12,7 +12,7 @@ Show two result lists: matching Profiles and matching Posts.
 <div class="card">
 
   <div class="feed-header">
-    <a href="{% url 'search' profile.pk %}">← New Search</a>
+    <a href="{% url 'search'%}">← New Search</a>
   </div>
 
   <div class="section-title">
@@ -22,7 +22,7 @@ Show two result lists: matching Profiles and matching Posts.
   <h3>Matching Profiles</h3>
   {% for p in profiles %}
     <div>
-      <a href="{% url 'show_profile' p.pk %}">
+      <a href="{% url 'profile' %}">
         {{ p.display_name }} (@{{ p.username }})
       </a>
     </div>
