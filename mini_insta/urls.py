@@ -20,7 +20,7 @@ urlpatterns = [
     path('profile/feed', PostFeedListView.as_view(), name='show_feed'),
     path('profile/search', SearchView.as_view(), name='search'),
     path("login/", auth_views.LoginView.as_view(template_name="mini_insta/login.html"),name="login"),
-    path("logout/", auth_views.LogoutView.as_view(), name="logout"),
+    path("logout/", auth_views.LogoutView.as_view( template_name="mini_insta/logged_out.html"), name="logout"),
     path("profile", MyProfileView.as_view(), name="profile"),
     
 ]

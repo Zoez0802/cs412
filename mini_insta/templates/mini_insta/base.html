@@ -32,12 +32,21 @@
     <div class="auth-status">
       {% if request.user.is_authenticated %}
         Logged in user: {{ request.user }}.
-        <form method="post" action="{% url 'logout' %}"  class="logout-form">
+
+        <!-- Link to my profile -->
+        <a class="nav-link profile-link" href="{% url 'profile' %}">My Profile</a>
+
+        <!-- Logout-->
+        <form method="post" action="{% url 'logout' %}" class="logout-form">
           {% csrf_token %}
-          <button type="submit" class="nav-link">Logout</button>
+          <button type="submit" class="nav-link profile-link">Logout</button>
         </form>
+
       {% else %}
         Not logged in.
+
+        <!-- Login link -->
+        <a class="nav-link profile-link" href="{% url 'login' %}">Login</a>
       {% endif %}
     </div>
       

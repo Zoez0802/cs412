@@ -1,4 +1,8 @@
 <!-- mini_insta/templates/mini_insta/login.html -->
+ <!--
+Author: Minjie Zuo (minjiez@bu.edu)
+This template renders the login form. It extends the base template and uses Django's built-in authentication views. The form submits a POST request to the 'login' URL, which is handled by Django's LoginView. If there is a 'next' parameter in the GET request (which indicates where to redirect after login), it includes that as a hidden input in the form. Otherwise, it defaults to redirecting to the profile page after login.
+-->
 {% extends 'mini_insta/base.html' %}
 
 {% block content %}
