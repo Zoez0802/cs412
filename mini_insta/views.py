@@ -4,13 +4,14 @@
 
 from urllib import request, response, response
 
-from django.views.generic import DetailView, ListView, CreateView, TemplateView, UpdateView, DeleteView, UpdateView
+from django.views.generic import DetailView, ListView, CreateView, TemplateView, UpdateView, DeleteView, UpdateView, CreateView
 from django.urls import reverse
 from .models import Profile, Post, Photo
-from .forms import CreatePostForm, UpdateProfileForm
+from .forms import CreatePostForm, UpdateProfileForm, CreateProfileForm
 from django.shortcuts import redirect, render #added for task 3 - a5
 from django.contrib.auth.mixins import LoginRequiredMixin  # NEW
-
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login
 
 class InstaLoginRequiredMixin(LoginRequiredMixin):
     """Require the user to be logged in for this view.Also sets the login URL using our named route."""
@@ -232,3 +233,38 @@ class MyProfileView(LoginRequiredMixin, DetailView):
     def get_object(self):
         # FK -> could be multiple for admin, testing should use non-admin user
         return Profile.objects.filter(user=self.request.user).first()
+
+
+
+class CreateProfileView(CreateView):
+    """Create a new User and a Profile together (two forms, one submit)."""
+
+    model = Profile
+    form_class = CreateProfileForm
+    template_name = "mini_insta/create_profile_form.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # If we already passed a bound user_form, keep it.
+        if "user_form" in kwargs:
+            context["user_form"] = kwargs["user_form"]
+        else:
+            context["user_form"] = UserCreationForm(prefix="user")
+
+        return context
+
+    def form_valid(self, form):
+        # Build the bound user form using the same POST data
+        user_form = UserCreationForm(self.request.POST, prefix="user")
+
+        # If user form is invalid, re-render page with BOTH forms
+        if not user_form.is_valid():
+            return self.render_to_response(self.get_context_data(form=form, user_form=user_form))
+
+        new_user = user_form.save()
+        form.instance.user = new_user
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("profile")

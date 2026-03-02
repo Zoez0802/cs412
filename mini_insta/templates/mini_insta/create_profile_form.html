@@ -1,0 +1,23 @@
+<!-- mini_insta/templates/mini_insta/create_profile_form.html -->
+<!--
+Author: Minjie Zuo (minjiez@bu.edu), 3/2/2026
+Render the form for creating a new Profile.
+-->
+
+{% extends "mini_insta/base.html" %}
+
+{% block content %}
+<h1>Create Profile</h1>
+
+<form method="post">
+  {% csrf_token %}
+
+  <h2>Account</h2>
+  {{ user_form.as_p }}
+
+  <h2>Profile</h2>
+  {{ form.as_p }}
+
+  <input type="submit" value="Create">
+</form>
+{% endblock %}
