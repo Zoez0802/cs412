@@ -39,8 +39,30 @@ for a single profile for a specific person.
       <div class="joined">
         Joined {{ profile.join_date }}
       </div>
+
+        
+    <!-- Follow/Unfollow button -->
+    {% if request.user.is_authenticated %}
+      {% if can_follow %}
+        <div class="follow-area">
+          {% if is_following %}
+            <form method="post" action="{% url 'delete_follow' profile.pk %}">
+              {% csrf_token %}
+              <button type="submit" class="follow-btn following">Following</button>
+            </form>
+          {% else %}
+            <form method="post" action="{% url 'follow_profile' profile.pk %}">
+              {% csrf_token %}
+              <button type="submit" class="follow-btn">Follow</button>
+            </form>
+          {% endif %}
+        </div>
+      {% endif %}
+    {% endif %}
+
     </div>
   </div>
+
 
    <!-- Statistics section, use placeholders-->
   <div class="stats">

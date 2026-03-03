@@ -26,6 +26,24 @@ associated with that Post.
     </div>
   {% endwith %}
 
+  <!-- Like/Unlike button-->
+  {% if request.user.is_authenticated %}
+    {% if can_like %}
+      {% if is_liked %}
+        {# already liked -> show UNLIKE -> go to delete_like #}
+        <form method="post" action="{% url 'delete_like' post.pk %}">
+          {% csrf_token %}
+          <button type="submit" class="profile-link">Unlike</button>
+        </form>
+      {% else %}
+        <form method="post" action="{% url 'like_post' post.pk %}">
+          {% csrf_token %}
+          <button type="submit" class="profile-link">Like</button>
+        </form>
+      {% endif %}
+    {% endif %}
+  {% endif %}
+
   <!-- Post meta -->
   {% if post.caption %}
     <div class="post-caption">{{ post.caption }}</div>

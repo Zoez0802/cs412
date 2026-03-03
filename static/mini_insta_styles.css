@@ -383,3 +383,27 @@ body {
     gap: 12px;
     margin-bottom: 18px;
 }
+
+.follow-area {
+  margin-top: 14px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+/* follow button */
+.follow-btn {
+  border: none;
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+.follow-btn {
+  background: #1d9bf0;
+  color: white;
+}
+
+.follow-btn.following {
+  background: #e9eef3;
+  color: #111;
+}

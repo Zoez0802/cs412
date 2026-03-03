@@ -6,7 +6,7 @@ from urllib import request, response, response
 
 from django.views.generic import DetailView, ListView, CreateView, TemplateView, UpdateView, DeleteView, UpdateView, CreateView
 from django.urls import reverse
-from .models import Profile, Post, Photo
+from .models import Profile, Post, Photo, Follow, Like
 from .forms import CreatePostForm, UpdateProfileForm, CreateProfileForm
 from django.shortcuts import redirect, render #added for task 3 - a5
 from django.contrib.auth.mixins import LoginRequiredMixin  # NEW
@@ -30,6 +30,25 @@ class ProfileDetailView(DetailView):
     template_name = "mini_insta/show_profile.html"
     context_object_name = "profile"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        other = self.get_object()
+        me = None
+
+        if self.request.user.is_authenticated:
+            me = Profile.objects.filter(user=self.request.user).first()
+
+        # default: cannot follow
+        context["can_follow"] = False
+        context["is_following"] = False
+
+        # only allow follow if logged-in user has a profile AND it's not their own page
+        if me is not None and me.pk != other.pk:
+            context["can_follow"] = True
+            context["is_following"] = Follow.objects.filter(profile=other,follower_profile=me).exists()
+
+        return context
+
 class PostDetailView(DetailView):
     """Display a single Post object, including its Photos."""
     model = Post
@@ -40,10 +59,24 @@ class PostDetailView(DetailView):
     # Add the Profile to the context so base.html can render the navigation.
     # I want user to be able to cancel their action on update or delete post.
     def get_context_data(self, **kwargs):
-            context = super().get_context_data(**kwargs)
-            post = self.get_object()
-            context["profile"] = post.profile
-            return context
+        context = super().get_context_data(**kwargs)
+
+        post = self.get_object()
+
+        if self.request.user.is_authenticated:
+            me = Profile.objects.filter(user=self.request.user).first()
+
+            if me is not None and post.profile.pk != me.pk:
+                context["can_like"] = True
+                context["is_liked"] = Like.objects.filter(post=post, profile=me).exists()
+            else:
+                context["can_like"] = False
+                context["is_liked"] = False
+        else:
+            context["can_like"] = False
+            context["is_liked"] = False
+
+        return context
 
 class CreatePostView(InstaLoginRequiredMixin, CreateView):
     '''Display and process the form to create a new Post for a given Profile.'''
@@ -268,3 +301,72 @@ class CreateProfileView(CreateView):
 
     def get_success_url(self):
         return reverse("profile")
+    
+
+#Follow and Unfollow user's profile
+class FollowProfileView(InstaLoginRequiredMixin, TemplateView):
+    """Logged-in user's Profile can follows another Profile ."""
+
+    def dispatch(self, request, *args, **kwargs):
+        response = super().dispatch(request, *args, **kwargs)
+        if not request.user.is_authenticated:
+            return response
+
+        # Only allow POST to modify DB
+        if request.method == "POST":
+            me = Profile.objects.filter(user=request.user).first()
+            other = Profile.objects.get(pk=self.kwargs["pk"])
+
+            # cannot follow yourself
+            if me and me.pk != other.pk:
+                Follow.objects.get_or_create(profile=other, follower_profile=me)
+        
+        request.method = "GET" # i fixed the bug that after following, it redirects to the profile page but the method is still POST, which causes error because the profile page only accepts GET. By changing the method to GET before calling the detail view, we can fix this issue.
+        # return the profile page
+        return ProfileDetailView.as_view()(request, pk=self.kwargs["pk"])
+    
+
+class UnfollowProfileView(InstaLoginRequiredMixin, TemplateView):
+    """Logged-in user's Profile unfollows another Profile."""
+
+    def dispatch(self, request, *args, **kwargs):
+        response = super().dispatch(request, *args, **kwargs)
+        if not request.user.is_authenticated:
+            return response
+
+        if request.method == "POST":
+            me = Profile.objects.filter(user=request.user).first()
+            other = Profile.objects.get(pk=self.kwargs["pk"])
+
+            if me and me.pk != other.pk:
+                Follow.objects.filter(profile=other, follower_profile=me).delete()
+        request.method = "GET"
+        return ProfileDetailView.as_view()(request, pk=self.kwargs["pk"])
+    
+
+#Like and Unlike a post
+class LikePostView(InstaLoginRequiredMixin, TemplateView):
+    """Logged-in user's Profile likes a Post"""
+
+    def post(self, request, *args, **kwargs):
+        me = Profile.objects.filter(user=request.user).first()
+        post_obj = Post.objects.get(pk=self.kwargs["pk"])
+
+        if me and post_obj.profile.pk != me.pk:
+            Like.objects.get_or_create(post=post_obj, profile=me)
+
+        request.method = "GET" #IMPORTANT: call the detail view as GET
+        return PostDetailView.as_view()(request, pk=post_obj.pk)
+    
+class UnlikePostView(InstaLoginRequiredMixin, TemplateView):
+    """Logged-in user's Profile removes like from a Post"""
+
+    def post(self, request, *args, **kwargs):
+        me = Profile.objects.filter(user=request.user).first()
+        post_obj = Post.objects.get(pk=self.kwargs["pk"])
+
+        if me and post_obj.profile.pk != me.pk:
+            Like.objects.filter(post=post_obj, profile=me).delete()
+
+        request.method = "GET"
+        return PostDetailView.as_view()(request, pk=post_obj.pk)
