@@ -330,9 +330,9 @@ class UnfollowProfileView(InstaLoginRequiredMixin, TemplateView):
     """Logged-in user's Profile unfollows another Profile."""
 
     def dispatch(self, request, *args, **kwargs):
-        response = super().dispatch(request, *args, **kwargs)
+        r= super().dispatch(request, *args, **kwargs)
         if not request.user.is_authenticated:
-            return response
+            return r
 
         if request.method == "POST":
             me = Profile.objects.filter(user=request.user).first()
@@ -350,23 +350,23 @@ class LikePostView(InstaLoginRequiredMixin, TemplateView):
 
     def post(self, request, *args, **kwargs):
         me = Profile.objects.filter(user=request.user).first()
-        post_obj = Post.objects.get(pk=self.kwargs["pk"])
+        p_obj = Post.objects.get(pk=self.kwargs["pk"])
 
-        if me and post_obj.profile.pk != me.pk:
-            Like.objects.get_or_create(post=post_obj, profile=me)
+        if me and p_obj.profile.pk != me.pk:
+            Like.objects.get_or_create(post=p_obj, profile=me)
 
         request.method = "GET" #IMPORTANT: call the detail view as GET
-        return PostDetailView.as_view()(request, pk=post_obj.pk)
+        return PostDetailView.as_view()(request, pk=p_obj.pk)
     
 class UnlikePostView(InstaLoginRequiredMixin, TemplateView):
     """Logged-in user's Profile removes like from a Post"""
 
     def post(self, request, *args, **kwargs):
         me = Profile.objects.filter(user=request.user).first()
-        post_obj = Post.objects.get(pk=self.kwargs["pk"])
+        p_obj = Post.objects.get(pk=self.kwargs["pk"])
 
-        if me and post_obj.profile.pk != me.pk:
-            Like.objects.filter(post=post_obj, profile=me).delete()
+        if me and p_obj.profile.pk != me.pk:
+            Like.objects.filter(post=p_obj, profile=me).delete()
 
         request.method = "GET"
-        return PostDetailView.as_view()(request, pk=post_obj.pk)
+        return PostDetailView.as_view()(request, pk=p_obj.pk)
