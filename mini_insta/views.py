@@ -128,6 +128,8 @@ class UpdateProfileView(LoginRequiredMixin, UpdateView):
     def get_object(self):
         return Profile.objects.filter(user=self.request.user).first()
 
+    def get_login_url(self):
+        return reverse('login')
 
 class DeletePostView(LoginRequiredMixin, DeleteView):
     '''Display and process a form to delete an Post.'''
@@ -226,6 +228,10 @@ class PostFeedListView(LoginRequiredMixin, ListView):
         context['profile'] = profile
         return context
     
+    def get_login_url(self):
+        return reverse("login")
+
+    
 #for task 3 -a5
 class SearchView(LoginRequiredMixin, ListView):
     template_name = "mini_insta/search_results.html"
@@ -247,6 +253,11 @@ class SearchView(LoginRequiredMixin, ListView):
             return render(request, "mini_insta/search.html", {"profile": profile})
 
         return response
+    
+    def get_login_url(self):
+        return reverse("login")
+
+    
 
 
     def get_queryset(self):
