@@ -18,9 +18,8 @@
     <header class="site-header">
       <div class="header-inner">
         <div class="logo">Mini - Insta</div>
-        {% if request.user.is_authenticated %}
           <a class="nav-link" href="{% url 'show_all_profiles' %}">Home</a>
-        {% endif %}
+
       </div>
 
     </header>

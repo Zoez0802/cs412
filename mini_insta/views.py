@@ -13,11 +13,6 @@ from django.contrib.auth.mixins import LoginRequiredMixin  # NEW
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 
-class InstaLoginRequiredMixin(LoginRequiredMixin):
-    """Require the user to be logged in for this view.Also sets the login URL using our named route."""
-    def get_login_url(self):
-        return reverse('login')
-
 class ProfileListView(ListView):
     """Display a page that lists all Profile objects."""
     model = Profile
@@ -55,7 +50,7 @@ class PostDetailView(DetailView):
     template_name = "mini_insta/show_post.html"
     context_object_name = "post"
     
-    #i added this optionallly
+
     # Add the Profile to the context so base.html can render the navigation.
     # I want user to be able to cancel their action on update or delete post.
     def get_context_data(self, **kwargs):
@@ -78,7 +73,7 @@ class PostDetailView(DetailView):
 
         return context
 
-class CreatePostView(InstaLoginRequiredMixin, CreateView):
+class CreatePostView(LoginRequiredMixin, CreateView):
     '''Display and process the form to create a new Post for a given Profile.'''
 
     model = Post
@@ -119,8 +114,11 @@ class CreatePostView(InstaLoginRequiredMixin, CreateView):
 
     def get_success_url(self):
         return reverse('profile')
+    
+    def get_login_url(self):
+        return reverse('login')
         
-class UpdateProfileView(InstaLoginRequiredMixin, UpdateView):
+class UpdateProfileView(LoginRequiredMixin, UpdateView):
     '''Display and process a form to update an existing Profile.'''
 
     model= Profile
@@ -131,7 +129,7 @@ class UpdateProfileView(InstaLoginRequiredMixin, UpdateView):
         return Profile.objects.filter(user=self.request.user).first()
 
 
-class DeletePostView(InstaLoginRequiredMixin, DeleteView):
+class DeletePostView(LoginRequiredMixin, DeleteView):
     '''Display and process a form to delete an Post.'''
 
     model = Post
@@ -152,12 +150,19 @@ class DeletePostView(InstaLoginRequiredMixin, DeleteView):
         post = self.get_object()
         return reverse('show_profile', kwargs={'pk': post.profile.pk})
     
-    def get_queryset(self):
-        # Only allow user to update THEIR profile
-        return Post.objects.filter(profile__user=self.request.user)
+    def dispatch(self, request, *args, **kwargs):
+        post = Post.objects.get(pk=kwargs["pk"])
 
+        # if user not owner → redirect to login
+        if post.profile.user != request.user:
+            return redirect("login")
 
-class UpdatePostView(InstaLoginRequiredMixin, UpdateView):
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_login_url(self):
+        return reverse('login')
+
+class UpdatePostView(LoginRequiredMixin, UpdateView):
     '''Display and process a form to update Post.'''
 
     model = Post
@@ -174,8 +179,17 @@ class UpdatePostView(InstaLoginRequiredMixin, UpdateView):
         context['post'] = self.get_object()
         return context
     
-    def get_queryset(self):
-        return Post.objects.filter(profile__user=self.request.user)
+    def dispatch(self, request, *args, **kwargs):
+        post = Post.objects.get(pk=kwargs["pk"])
+
+        # if user not owner → redirect to login
+        if post.profile.user != request.user:
+            return redirect("login")
+
+        return super().dispatch(request, *args, **kwargs)
+        
+    def get_login_url(self):
+        return reverse('login')
 
 
 class ShowFollowersDetailView(DetailView):
@@ -192,7 +206,7 @@ class ShowFollowingDetailView(DetailView):
     context_object_name = "profile"
 
 
-class PostFeedListView(InstaLoginRequiredMixin, ListView):
+class PostFeedListView(LoginRequiredMixin, ListView):
     '''Display a feed of Posts for one Profile.'''
 
     template_name = "mini_insta/show_feed.html"
@@ -200,7 +214,7 @@ class PostFeedListView(InstaLoginRequiredMixin, ListView):
 
     def get_queryset(self):
         profile = Profile.objects.filter(user=self.request.user).first()
-            # Only owner can view feed
+        # Only owner can view feed
         if profile.user != self.request.user:
             return Post.objects.none()
 
@@ -213,7 +227,7 @@ class PostFeedListView(InstaLoginRequiredMixin, ListView):
         return context
     
 #for task 3 -a5
-class SearchView(InstaLoginRequiredMixin, ListView):
+class SearchView(LoginRequiredMixin, ListView):
     template_name = "mini_insta/search_results.html"
 
 
@@ -296,6 +310,7 @@ class CreateProfileView(CreateView):
             return self.render_to_response(self.get_context_data(form=form, user_form=user_form))
 
         new_user = user_form.save()
+        login(self.request, new_user) # log in the new user immediately after signing up，use login()to log the user, provided by
         form.instance.user = new_user
         return super().form_valid(form)
 
@@ -304,7 +319,7 @@ class CreateProfileView(CreateView):
     
 
 #Follow and Unfollow user's profile
-class FollowProfileView(InstaLoginRequiredMixin, TemplateView):
+class FollowProfileView(LoginRequiredMixin, TemplateView):
     """Logged-in user's Profile can follows another Profile ."""
 
     def dispatch(self, request, *args, **kwargs):
@@ -325,8 +340,11 @@ class FollowProfileView(InstaLoginRequiredMixin, TemplateView):
         # return the profile page
         return ProfileDetailView.as_view()(request, pk=self.kwargs["pk"])
     
+    def get_login_url(self):
+        return reverse('login')
+    
 
-class UnfollowProfileView(InstaLoginRequiredMixin, TemplateView):
+class UnfollowProfileView(LoginRequiredMixin, TemplateView):
     """Logged-in user's Profile unfollows another Profile."""
 
     def dispatch(self, request, *args, **kwargs):
@@ -343,9 +361,12 @@ class UnfollowProfileView(InstaLoginRequiredMixin, TemplateView):
         request.method = "GET"
         return ProfileDetailView.as_view()(request, pk=self.kwargs["pk"])
     
+    def get_login_url(self):
+        return reverse('login')
+    
 
 #Like and Unlike a post
-class LikePostView(InstaLoginRequiredMixin, TemplateView):
+class LikePostView(LoginRequiredMixin, TemplateView):
     """Logged-in user's Profile likes a Post"""
 
     def post(self, request, *args, **kwargs):
@@ -358,7 +379,10 @@ class LikePostView(InstaLoginRequiredMixin, TemplateView):
         request.method = "GET" #IMPORTANT: call the detail view as GET
         return PostDetailView.as_view()(request, pk=p_obj.pk)
     
-class UnlikePostView(InstaLoginRequiredMixin, TemplateView):
+    def get_login_url(self):
+        return reverse('login')
+    
+class UnlikePostView(LoginRequiredMixin, TemplateView):
     """Logged-in user's Profile removes like from a Post"""
 
     def post(self, request, *args, **kwargs):
@@ -370,3 +394,6 @@ class UnlikePostView(InstaLoginRequiredMixin, TemplateView):
 
         request.method = "GET"
         return PostDetailView.as_view()(request, pk=p_obj.pk)
+    
+    def get_login_url(self):
+        return reverse('login')

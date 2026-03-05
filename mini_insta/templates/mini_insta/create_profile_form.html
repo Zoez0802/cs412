@@ -11,6 +11,9 @@ Render the form for creating a new Profile.
 
 <form method="post">
   {% csrf_token %}
+  <!-- Display form errors , i added this to debug-->
+  {{ user_form.errors }}
+  {{ form.errors }}
 
   <h2>Account</h2>
   {{ user_form.as_p }}
