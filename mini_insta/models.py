@@ -115,6 +115,7 @@ class Photo(models.Model):
     image_file = models.ImageField(blank=True)
 
     def get_image_url(self):
+        '''Return the URL of this Photo, whether it's from image_url or image_file.'''
         if self.image_url: return self.image_url
         if self.image_file: return self.image_file.url
         return ''
