@@ -1,0 +1,23 @@
+<!--
+File: base.html
+Author: Minjie Zuo (minjiez@bu.edu), 3/16/2026
+Description: Base template for the voter_analytics application.
+-->
+<html>
+    <head>
+        <title>Voter Analytics</title>
+    </head>
+
+    <body>
+        <header>
+            <h1>Voter Analytics</h1>
+            <nav>
+                <a href="{% url 'voters' %}">All Voters</a>
+            </nav>
+            <hr>
+        </header>
+
+        {% block content %}
+        {% endblock %}
+    </body>
+</html>

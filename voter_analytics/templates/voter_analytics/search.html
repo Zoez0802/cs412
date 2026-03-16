@@ -1,0 +1,76 @@
+<!--
+    File: search.html
+    Author: Minjie Zuo (minjiez@bu.edu), 3/16/2026
+    Description: Search form used to filter the voter list.
+-->
+
+<form action="{% url 'voters' %}" method="get">
+    <table>
+        <tr>
+            <th>Party Affiliation:</th>
+            <td>
+                <select name="party_affiliation">
+                    <option value="">All</option>
+                    <option value="D ">D</option>
+                    <option value="R ">R</option>
+                    <option value="U ">U</option>
+                </select>
+            </td>
+        </tr>
+
+        <tr>
+            <th>Minimum Birth Year:</th>
+            <td>
+                <select name="min_birth_year">
+                    <option value="">Any</option>
+                    {% for year in years %}
+                        <option value="{{ year }}">{{ year }}</option>
+                    {% endfor %}
+                </select>
+            </td>
+        </tr>
+
+        <tr>
+            <th>Maximum Birth Year:</th>
+            <td>
+                <select name="max_birth_year">
+                    <option value="">Any</option>
+                    {% for year in years %}
+                        <option value="{{ year }}">{{ year }}</option>
+                    {% endfor %}
+                </select>
+            </td>
+        </tr>
+
+        <tr>
+            <th>Voter Score:</th>
+            <td>
+                <select name="voter_score">
+                    <option value="">Any</option>
+                    <option value="0">0</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+            </td>
+        </tr>
+
+        <tr>
+            <th>Voted In:</th>
+            <td>
+                <input type="checkbox" name="v20state"> 2020 State
+                <input type="checkbox" name="v21town"> 2021 Town
+                <input type="checkbox" name="v21primary"> 2021 Primary
+                <input type="checkbox" name="v22general"> 2022 General
+                <input type="checkbox" name="v23town"> 2023 Town
+            </td>
+        </tr>
+
+        <tr>
+            <td><input type="submit" value="Filter"></td>
+            <td><a href="{% url 'voters' %}">Clear</a></td>
+        </tr>
+    </table>
+</form>
