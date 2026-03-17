@@ -4,7 +4,7 @@
     Description: Search form used to filter the voter list.
 -->
 
-<form action="{% url 'voters' %}" method="get">
+<form method="get">
     <table>
         <tr>
             <th>Party Affiliation:</th>
@@ -70,7 +70,7 @@
 
         <tr>
             <td><input type="submit" value="Filter"></td>
-            <td><a href="{% url 'voters' %}">Clear</a></td>
+            <a href=".">Clear</a>
         </tr>
     </table>
 </form>

@@ -4,11 +4,14 @@
     Description: Template to display a list of voter records.
 -->
 
+{% extends 'voter_analytics/base.html' %}
+
 <html>
     <head>
         <title>Voter Analytics</title>
     </head>
 
+{% block content %}
     <body>
         <h1>Showing All Voters</h1>
 
@@ -29,9 +32,7 @@
             {% endif %}
         {% endif %}
 
-        <!-- I choose to display the details of voter in an table,
-    although the assignment does not require a table layout, but a table provides a clear
-    key–value structure -->
+        <!-- I choose to display the details of voter in an table, a table provides a clear key–value structure -->
         <table border="1">
             <tr>
                 <th>First Name</th>
@@ -64,3 +65,4 @@
         </table>
     </body>
 </html>
+{% endblock %}

@@ -3,21 +3,26 @@ File: base.html
 Author: Minjie Zuo (minjiez@bu.edu), 3/16/2026
 Description: Base template for the voter_analytics application.
 -->
+{% load static %}
 <html>
     <head>
         <title>Voter Analytics</title>
+        <link rel="stylesheet" href="{% static 'voterstyles.css' %}">
     </head>
 
     <body>
-        <header>
-            <h1>Voter Analytics</h1>
-            <nav>
-                <a href="{% url 'voters' %}">All Voters</a>
-            </nav>
-            <hr>
-        </header>
+        <div class="page-container">
+            <h1 class="page-title">Voter Analytics</h1>
 
-        {% block content %}
-        {% endblock %}
+            <nav class="page-nav">
+                <a href="{% url 'voters' %}">All Voters</a> |
+                <a href="{% url 'graphs' %}">Graphs</a>
+            </nav>
+
+            <hr>
+
+            {% block content %}
+            {% endblock %}
+        </div>
     </body>
 </html>

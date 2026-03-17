@@ -64,7 +64,7 @@ def load_data():
                 date_of_registration=fields[8],
                 party_affiliation=fields[9],
                 precinct_number=fields[10],
-                # fixed:# convert TRUE /FALSE string to boolean
+                # fixed: convert TRUE /FALSE string to boolean
                 v20state=(fields[11] == 'TRUE'),
                 v21town=(fields[12] == 'TRUE'),
                 v21primary=(fields[13] == 'TRUE'),

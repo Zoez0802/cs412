@@ -1,0 +1,28 @@
+<!--
+    File: graphs.html
+    Author: Minjie Zuo (minjiez@bu.edu), 3/16/2026
+    Description: Template to display graphs for voter data.
+-->
+
+{% extends 'voter_analytics/base.html' %}
+
+{% block content %}
+    <h1>Graphs of Voter Data</h1>
+    <!-- Reuse the same search form to filter the graphs. -->
+    {% include 'voter_analytics/search.html' %}
+
+    <!-- voter birth years. -->
+    <div>
+        {{ graph_div_birth|safe }}
+    </div>
+
+    <!-- party affiliation. -->
+    <div>
+        {{ graph_div_party|safe }}
+    </div>
+
+    <!--election participation. -->
+    <div>
+        {{ graph_div_elections|safe }}
+    </div>
+{% endblock %}
