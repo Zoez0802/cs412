@@ -86,3 +86,5 @@ class ResultDetailView(DetailView):
 
         context['graph_div_passed'] = graph_div_passed
         return context
+    
+    

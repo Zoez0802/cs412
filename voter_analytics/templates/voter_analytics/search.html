@@ -11,9 +11,9 @@
             <td>
                 <select name="party_affiliation">
                     <option value="">All</option>
-                    <option value="D ">D</option>
-                    <option value="R ">R</option>
-                    <option value="U ">U</option>
+                    <option value="D " {% if request.GET.party_affiliation == "D " %}selected{% endif %}>D</option>
+                    <option value="R " {% if request.GET.party_affiliation == "R " %}selected{% endif %}>R</option>
+                    <option value="U " {% if request.GET.party_affiliation == "U " %}selected{% endif %}>U</option>
                 </select>
             </td>
         </tr>
@@ -24,7 +24,13 @@
                 <select name="min_birth_year">
                     <option value="">Any</option>
                     {% for year in years %}
-                        <option value="{{ year }}">{{ year }}</option>
+                        <!-- Modify to keep the selected option after filtering. -->
+                        <!-- request.GET values are always strings, but `year` in the loop is an integer.
+                            Thus use `|stringformat:"s"` to convert `year` to a string. -->
+                        <option value="{{ year }}" 
+                        {% if request.GET.min_birth_year == year|stringformat:"s" %}selected{% endif %}>
+                        {{ year }}
+                        </option>
                     {% endfor %}
                 </select>
             </td>
@@ -36,7 +42,13 @@
                 <select name="max_birth_year">
                     <option value="">Any</option>
                     {% for year in years %}
-                        <option value="{{ year }}">{{ year }}</option>
+                        <!-- Modify to keep the selected option after filtering. -->
+                        <!-- request.GET values are always strings, but `year` in the loop is an integer.
+                            Thus use `|stringformat:"s"` to convert `year` to a string. -->
+                        <option value="{{ year }}" 
+                        {% if request.GET.max_birth_year == year|stringformat:"s" %}selected{% endif %}>
+                        {{ year }}
+                        </option>
                     {% endfor %}
                 </select>
             </td>
@@ -47,12 +59,12 @@
             <td>
                 <select name="voter_score">
                     <option value="">Any</option>
-                    <option value="0">0</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
+                    <option value="0" {% if request.GET.voter_score == "0" %}selected{% endif %}>0</option>
+                    <option value="1" {% if request.GET.voter_score == "1" %}selected{% endif %}>1</option>
+                    <option value="2" {% if request.GET.voter_score == "2" %}selected{% endif %}>2</option>
+                    <option value="3" {% if request.GET.voter_score == "3" %}selected{% endif %}>3</option>
+                    <option value="4" {% if request.GET.voter_score == "4" %}selected{% endif %}>4</option>
+                    <option value="5" {% if request.GET.voter_score == "5" %}selected{% endif %}>5</option>
                 </select>
             </td>
         </tr>
@@ -60,17 +72,17 @@
         <tr>
             <th>Voted In:</th>
             <td>
-                <input type="checkbox" name="v20state"> 2020 State
-                <input type="checkbox" name="v21town"> 2021 Town
-                <input type="checkbox" name="v21primary"> 2021 Primary
-                <input type="checkbox" name="v22general"> 2022 General
-                <input type="checkbox" name="v23town"> 2023 Town
+              <input type="checkbox" name="v20state" {% if request.GET.v20state %}checked{% endif %}> 2020 State
+                <input type="checkbox" name="v21town" {% if request.GET.v21town %}checked{% endif %}> 2021 Town
+                <input type="checkbox" name="v21primary" {% if request.GET.v21primary %}checked{% endif %}> 2021 Primary
+                <input type="checkbox" name="v22general" {% if request.GET.v22general %}checked{% endif %}> 2022 General
+                <input type="checkbox" name="v23town" {% if request.GET.v23town %}checked{% endif %}> 2023 Town
             </td>
         </tr>
 
         <tr>
             <td><input type="submit" value="Filter"></td>
-            <a href=".">Clear</a>
+            <td><a href=".">Clear</a></td>
         </tr>
     </table>
 </form>
