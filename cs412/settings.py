@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "mini_insta",
     "marathon_analytics", #module 7
     'voter_analytics', #Assignment 7
+    "rest_framework", ## NEW: Django REST framework
 ]
 
 MIDDLEWARE = [
@@ -140,3 +141,7 @@ if socket.gethostname() == CS_DEPLOYMENT_HOSTNAME:
     STATIC_URL = '/minjiez/static/'
     MEDIA_URL = '/minjiez/media/'
 
+REST_FRAMEWORK = {
+  'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+  'PAGE_SIZE': 10
+}

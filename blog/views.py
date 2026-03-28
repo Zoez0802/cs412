@@ -4,6 +4,8 @@
  
 
 from django.shortcuts import render
+
+from blog.serializers import ArticleSerializer
 from .models import Article, Comment
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .forms import CreateArticleForm, CreateCommentForm, UpdateArticleForm
@@ -199,3 +201,7 @@ class RegistrationView(CreateView):
         "url to redirect to after successful registration"
         return reverse('login')    
  
+
+class ArticleDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Article.objects.all()
+    serializer_class = ArticleSerializer
