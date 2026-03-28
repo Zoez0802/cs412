@@ -1,0 +1,22 @@
+<!-- dadjokes/templates/dadjokes/show_all_jokes.html -->
+<!--author: Minjie Zuo, 3/28/2026-->
+<!-- Template to display all jokes in the dadjokes app. -->
+
+{% extends 'dadjokes/base.html' %}
+
+{% block content %}
+    <h2>All Jokes</h2>
+
+    {% if jokes %}
+        {% for joke in jokes %}
+            <div>
+                <p>{{ joke.text }}</p>
+                <p><strong>Contributor:</strong> {{ joke.contributor }}</p>
+                <p><a href="{% url 'show_joke' joke.pk %}">See details</a></p>
+                <hr>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No jokes available yet.</p>
+    {% endif %}
+{% endblock %}

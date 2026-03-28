@@ -1,0 +1,15 @@
+<!-- dadjokes/templates/dadjokes/show_joke.html -->
+<!--author: Minjie Zuo, 3/28/2026-->
+<!-- Template to display a single joke in the dadjokes app. -->
+
+{% extends 'dadjokes/base.html' %}
+
+{% block content %}
+    <h2>Joke {{ joke.pk }}</h2>
+
+    <p>{{ joke.text }}</p>
+    <p><strong>Contributor:</strong> {{ joke.contributor }}</p>
+    <p><strong>Created:</strong> {{ joke.created_at }}</p>
+
+    <p><a href="{% url 'show_all_jokes' %}">Back to all jokes</a></p>
+{% endblock %}

@@ -1,0 +1,22 @@
+<!-- dadjokes/templates/dadjokes/show_all_pictures.html -->
+<!--author: Minjie Zuo, 3/28/2026-->
+<!-- Template to display all pictures in the dadjokes app. -->
+
+{% extends 'dadjokes/base.html' %}
+
+{% block content %}
+    <h2>All Pictures</h2>
+
+    {% if pictures %}
+        {% for picture in pictures %}
+            <div>
+                <img src="{{ picture.image_url }}" alt="Funny picture" width="300">
+                <p><strong>Contributor:</strong> {{ picture.contributor }}</p>
+                <p><a href="{% url 'show_picture' picture.pk %}">See details</a></p>
+                <hr>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No pictures available yet.</p>
+    {% endif %}
+{% endblock %}

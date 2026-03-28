@@ -5,7 +5,6 @@
 
 from django.shortcuts import render
 
-from blog.serializers import ArticleSerializer
 from .models import Article, Comment
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .forms import CreateArticleForm, CreateCommentForm, UpdateArticleForm
@@ -15,6 +14,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin ## NEW
 from django.contrib.auth.forms import UserCreationForm ## NEW
 from django.contrib.auth.models import User ## NEW
 from django.contrib.auth import login # NEW
+
  
 class ShowAllView(ListView):
     '''Create a subclass of ListView to display all blog articles.'''
@@ -202,6 +202,3 @@ class RegistrationView(CreateView):
         return reverse('login')    
  
 
-class ArticleDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Article.objects.all()
-    serializer_class = ArticleSerializer

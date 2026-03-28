@@ -1,0 +1,28 @@
+<!-- dadjokes/templates/dadjokes/home.html -->
+ <!--author: Minjie Zuo, 3/28/2026-->
+<!-- Home page template for the dadjokes app. Displays a random joke and picture. -->
+{% extends 'dadjokes/base.html' %}
+
+{% block content %}
+    <h2>A Random Joke</h2>
+
+    <h3>Joke</h3>
+    {% if joke %}
+        <p>{{ joke.text }}</p>
+        <p><strong>Contributor:</strong> {{ joke.contributor }}</p>
+        <p><a href="{% url 'show_joke' joke.pk %}">View this joke</a></p>
+    {% else %}
+        <p>No jokes available yet.</p>
+    {% endif %}
+
+    <hr>
+
+    <h3>Picture</h3>
+    {% if picture %}
+        <img src="{{ picture.image_url }}" alt="hahaha" width="300">
+        <p><strong>Contributor:</strong> {{ picture.contributor }}</p>
+        <p><a href="{% url 'show_picture' picture.pk %}">View this picture</a></p>
+    {% else %}
+        <p>No pictures available yet.</p>
+    {% endif %}
+{% endblock %}

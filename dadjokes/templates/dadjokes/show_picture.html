@@ -1,0 +1,14 @@
+<!-- dadjokes/templates/dadjokes/show_picture.html -->
+<!--author: Minjie Zuo, 3/28/2026-->
+<!-- Template to display a single picture in the dadjokes app. -->
+{% extends 'dadjokes/base.html' %}
+
+{% block content %}
+    <h2>Picture {{ picture.pk }}</h2>
+
+    <img src="{{ picture.image_url }}" alt="Funny picture" width="400">
+    <p><strong>Contributor:</strong> {{ picture.contributor }}</p>
+    <p><strong>Created:</strong> {{ picture.created_at }}</p>
+
+    <p><a href="{% url 'show_all_pictures' %}">Back to all pictures</a></p>
+{% endblock %}
