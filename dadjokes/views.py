@@ -45,7 +45,7 @@ def random_page(request):
 
 def show_all_jokes(request):
     """Show all jokes."""
-    jokes = Joke.objects.all().order_by("-created_at")
+    jokes = Joke.objects.all()
 
     context = {
         "jokes": jokes,
@@ -55,7 +55,7 @@ def show_all_jokes(request):
 
 def show_joke(request, pk):
     """Show one joke by primary key."""
-    joke = get_object_or_404(Joke, pk=pk)
+    joke = Joke.objects.get(pk=pk)
 
     context = {
         "joke": joke,
@@ -65,7 +65,7 @@ def show_joke(request, pk):
 
 def show_all_pictures(request):
     """Show all pictures."""
-    pictures = Picture.objects.all().order_by("-created_at")
+    pictures = Picture.objects.all()
 
     context = {
         "pictures": pictures,
@@ -75,7 +75,7 @@ def show_all_pictures(request):
 
 def show_picture(request, pk):
     """Show one picture by primary key."""
-    picture = get_object_or_404(Picture, pk=pk)
+    picture = Picture.objects.get(pk=pk)
 
     context = {
         "picture": picture,
