@@ -5,11 +5,14 @@
 {% extends 'dadjokes/base.html' %}
 
 {% block content %}
-    <h2>Joke {{ joke.pk }}</h2>
+<div class="content-block">
+    <h2 class="section-title">Joke</h2>
 
-    <p>{{ joke.text }}</p>
-    <p><strong>Contributor:</strong> {{ joke.contributor }}</p>
-    <p><strong>Created:</strong> {{ joke.created_at }}</p>
+    <p class="joke-text">{{ joke.text }}</p>
+    <p class="meta-info">
+        {{ joke.contributor }} · {{ joke.created_at }}
+    </p>
 
     <p><a href="{% url 'show_all_jokes' %}">Back to all jokes</a></p>
+</div>
 {% endblock %}

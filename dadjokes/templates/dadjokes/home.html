@@ -6,22 +6,26 @@
 {% block content %}
     <h2>A Random Joke</h2>
 
-    <h3>Joke</h3>
+<div class="content-block">
+    <h3 class="section-title">Joke</h3>
     {% if joke %}
-        <p>{{ joke.text }}</p>
-        <p><strong>Contributor:</strong> {{ joke.contributor }}</p>
-        <p><a href="{% url 'show_joke' joke.pk %}">View this joke</a></p>
+        <p class="main-text">{{ joke.text }}</p>
+        <p>
+            {{ joke.contributor }} · {{ joke.created_at }}
+        </p>
+
     {% else %}
         <p>No jokes available yet.</p>
     {% endif %}
-
     <hr>
 
-    <h3>Picture</h3>
+<div class="content-block">
+    <h3 class="section-title">Picture</h3>
     {% if picture %}
         <img src="{{ picture.image_url }}" alt="hahaha" width="300">
-        <p><strong>Contributor:</strong> {{ picture.contributor }}</p>
-        <p><a href="{% url 'show_picture' picture.pk %}">View this picture</a></p>
+        <p>
+            {{ picture.contributor }} · {{ picture.created_at }}
+        </p>
     {% else %}
         <p>No pictures available yet.</p>
     {% endif %}

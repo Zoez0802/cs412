@@ -9,10 +9,10 @@
 
     {% if pictures %}
         {% for picture in pictures %}
-            <div>
-                <img src="{{ picture.image_url }}" alt="Funny picture" width="300">
-                <p><strong>Contributor:</strong> {{ picture.contributor }}</p>
-                <p><a href="{% url 'show_picture' picture.pk %}">See details</a></p>
+            <div class="image-center">
+                <img src="{{ picture.image_url }}" width="300">
+                <p>Contributor: {{ picture.contributor }}</p>
+                <p>Created at: {{ picture.created_at }}</p>
                 <hr>
             </div>
         {% endfor %}

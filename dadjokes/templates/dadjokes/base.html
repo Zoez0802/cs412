@@ -1,24 +1,29 @@
 <!-- dadjokes/templates/dadjokes/base.html -->
  <!--author: Minjie Zuo, 3/28/2026-->
 <!-- Base template for the dadjokes app. Other templates will extend this one. -->
+{% load static %}
+
 <!DOCTYPE html>
 <html>
 <head>
     <title>Dad Jokes</title>
+    <link rel="stylesheet" href="{% static 'jokescss.css' %}">
 </head>
 <body>
-    <h1>Dad Jokes</h1>
+    <div class="page-more">
+        <div class="page-card">
+            <h1 class="page-title">Dad Jokes</h1>
 
-    <nav>
-        <a href="{% url 'home' %}">Home</a> |
-        <a href="{% url 'random' %}">Random</a> |
-        <a href="{% url 'show_all_jokes' %}">All Jokes</a> |
-        <a href="{% url 'show_all_pictures' %}">All Pictures</a>
-    </nav>
+            <div class="nav-row">
+                <a class="nav-link" href="{% url 'home' %}">Home</a>
+                <a class="nav-link" href="{% url 'random' %}">Random</a>
+                <a class="nav-link" href="{% url 'show_all_jokes' %}">All Jokes</a>
+                <a class="nav-link" href="{% url 'show_all_pictures' %}">All Pictures</a>
+            </div>
 
-    <hr>
-
-    {% block content %}
-    {% endblock %}
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
 </body>
 </html>

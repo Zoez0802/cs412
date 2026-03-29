@@ -4,11 +4,14 @@
 {% extends 'dadjokes/base.html' %}
 
 {% block content %}
-    <h2>Picture {{ picture.pk }}</h2>
+<div class="content-block">
+    <h2 class="section-title">Picture</h2>
 
-    <img src="{{ picture.image_url }}" alt="Funny picture" width="400">
-    <p><strong>Contributor:</strong> {{ picture.contributor }}</p>
-    <p><strong>Created:</strong> {{ picture.created_at }}</p>
+    <img src="{{ picture.image_url }}" class="picture-img">
+    <p>
+        {{ picture.contributor }} · {{ picture.created_at }}
+    </p>
 
     <p><a href="{% url 'show_all_pictures' %}">Back to all pictures</a></p>
+</div>
 {% endblock %}

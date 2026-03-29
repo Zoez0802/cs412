@@ -11,8 +11,8 @@
         {% for joke in jokes %}
             <div>
                 <p>{{ joke.text }}</p>
-                <p><strong>Contributor:</strong> {{ joke.contributor }}</p>
-                <p><a href="{% url 'show_joke' joke.pk %}">See details</a></p>
+                <p>Contributor: {{ joke.contributor }}</p>
+                <p>Created at: {{ joke.created_at }}</p>
                 <hr>
             </div>
         {% endfor %}
