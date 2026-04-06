@@ -3,7 +3,7 @@
 # This file defines the URL patterns for the Mini-Insta application.
 
 from django.urls import path
-from .views import CreateProfileView, DeletePostView, PostFeedListView, ProfileDetailView, ProfileListView, PostDetailView, CreatePostView, SearchView, ShowFollowersDetailView, ShowFollowingDetailView, UpdatePostView, UpdateProfileView, DeletePostView, SearchView, MyProfileView, FollowProfileView, UnfollowProfileView, LikePostView, UnlikePostView
+from .views import CreateProfileView, DeletePostView, PostFeedListView, PostListCreateAPIView, ProfileDetailAPIView, ProfileDetailView, ProfileFeedAPIView, ProfileListAPIView, ProfileListView, PostDetailView, CreatePostView, ProfilePostsAPIView, SearchView, ShowFollowersDetailView, ShowFollowingDetailView, UpdatePostView, UpdateProfileView, DeletePostView, SearchView, MyProfileView, FollowProfileView, UnfollowProfileView, LikePostView, UnlikePostView
 from django.contrib.auth import views as auth_views
 
 
@@ -31,5 +31,12 @@ urlpatterns = [
     # like/unlike
     path("post/<int:pk>/like", LikePostView.as_view(), name="like_post"),
     path("post/<int:pk>/delete_like", UnlikePostView.as_view(), name="delete_like"),
+        
+    # API endpoints
+    path("api/profiles", ProfileListAPIView.as_view()),
+    path("api/profile/<int:pk>", ProfileDetailAPIView.as_view()),
+    path("api/profile/<int:pk>/posts", ProfilePostsAPIView.as_view()),
+    path("api/profile/<int:pk>/feed", ProfileFeedAPIView.as_view()),
+    path("api/posts", PostListCreateAPIView.as_view()),
         
 ]

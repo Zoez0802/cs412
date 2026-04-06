@@ -13,6 +13,11 @@ from django.contrib.auth.mixins import LoginRequiredMixin  # NEW
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 
+#imports for API
+from rest_framework import generics
+from rest_framework.response import Response
+from .serializers import *
+
 class ProfileListView(ListView):
     """Display a page that lists all Profile objects."""
     model = Profile
@@ -408,3 +413,45 @@ class UnlikePostView(LoginRequiredMixin, TemplateView):
     
     def get_login_url(self):
         return reverse('login')
+    
+
+# views for API endpoints
+class ProfileListAPIView(generics.ListAPIView):
+    """Return all profiles."""
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
+
+
+class ProfileDetailAPIView(generics.RetrieveAPIView):
+    """Return one profile by id."""
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
+
+
+class ProfilePostsAPIView(generics.ListAPIView):
+    """Return all posts for one profile."""
+    serializer_class = PostSerializer
+
+    def get_queryset(self):
+        profile = Profile.objects.get(pk=self.kwargs["pk"])
+        return profile.get_all_posts()   # already exists 
+
+
+class ProfileFeedAPIView(generics.ListAPIView):
+    """Return feed for one profile."""
+    serializer_class = PostSerializer
+
+    def get_queryset(self):
+        profile = Profile.objects.get(pk=self.kwargs["pk"])
+        return profile.get_post_feed()  
+
+
+class PostListCreateAPIView(generics.ListCreateAPIView):
+    """Return all posts, or create a new post. For creating a new post, the request body should include the profile id and caption, and optionally an image url."""
+
+    queryset = Post.objects.all()
+    serializer_class = CreatePostSerializer
+
+    def perform_create(self, serializer):
+        """Override perform_create to handle the creation of a new post with an optional image url. If image_url is provided in the request data, create a Photo object for the new post using that image url."""
+        serializer.save()
