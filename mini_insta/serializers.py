@@ -49,7 +49,7 @@ class CreatePostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ['profile', 'caption', 'image_url']
+        fields = ['caption', 'image_url']
 
     def create(self, validated_data):
         image_url = validated_data.pop('image_url', '')
