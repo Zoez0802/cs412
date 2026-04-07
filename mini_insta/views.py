@@ -24,6 +24,23 @@ from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authentication import TokenAuthentication
 
+# helper function to get user from token in request (either GET or POST)
+def get_user_from_token_request(request):
+    token_key = request.GET.get('token')
+
+    if token_key is None:
+        token_key = request.data.get('token')
+
+    if token_key is None:
+        return None
+
+    try:
+        token = Token.objects.get(key=token_key)
+        return token.user
+    except Token.DoesNotExist:
+        return None
+    
+
 class ProfileListView(ListView):
     """Display a page that lists all Profile objects."""
     model = Profile
@@ -422,62 +439,62 @@ class UnlikePostView(LoginRequiredMixin, TemplateView):
     
 
 # views for API endpoints
-class ProfileListAPIView(generics.ListAPIView):
-    """Return all profiles."""
-    queryset = Profile.objects.all()
-    serializer_class = ProfileSerializer
-    #update for authentication and permission
-    permission_classes = [IsAuthenticated]
-    authentication_classes = [TokenAuthentication]
-
-
-class ProfileDetailAPIView(generics.RetrieveAPIView):
-    """Return one profile by id."""
-    queryset = Profile.objects.all()
-    serializer_class = ProfileSerializer
-    #update for authentication and permission
-    permission_classes = [IsAuthenticated]
-    authentication_classes = [TokenAuthentication]
-
-
 class ProfilePostsAPIView(generics.ListAPIView):
     """Return all posts for one profile."""
     serializer_class = PostSerializer
-    #update for authentication and permission
-    permission_classes = [IsAuthenticated]
-    authentication_classes = [TokenAuthentication]
+
+    def get(self, request, *args, **kwargs):
+        user = get_user_from_token_request(request)
+        if user is None:
+            return Response({"detail": "Authentication credentials were not provided."},status=status.HTTP_401_UNAUTHORIZED)
+        return super().get(request, *args, **kwargs)
 
     def get_queryset(self):
         profile = Profile.objects.get(pk=self.kwargs["pk"])
-        return profile.get_all_posts()   # already exists 
+        return profile.get_all_posts()
 
-
+# Return feed for one profile. Only posts by followed profiles, ordered by timestamp descending.
 class ProfileFeedAPIView(generics.ListAPIView):
     """Return feed for one profile."""
     serializer_class = PostSerializer
-    #update for authentication and permission
-    permission_classes = [IsAuthenticated]
-    authentication_classes = [TokenAuthentication]
+
+    def get(self, request, *args, **kwargs):
+        user = get_user_from_token_request(request)
+        if user is None:
+            return Response({"detail": "Authentication credentials were not provided."},status=status.HTTP_401_UNAUTHORIZED)
+        return super().get(request, *args, **kwargs)
 
     def get_queryset(self):
         profile = Profile.objects.get(pk=self.kwargs["pk"])
-        return profile.get_post_feed()  
+        return profile.get_post_feed()
 
-
+# Return list of all profiles
 class PostListCreateAPIView(generics.ListCreateAPIView):
     """Return all posts, or create a new post. For creating a new post, the request body should include the profile id and caption, and optionally an image url."""
 
     queryset = Post.objects.all()
     serializer_class = CreatePostSerializer
-    #update for authentication and permission
-    permission_classes = [IsAuthenticated]
-    authentication_classes = [TokenAuthentication]
+
+    def get(self, request, *args, **kwargs):
+        user = get_user_from_token_request(request)
+        if user is None:
+            return Response({"detail": "Authentication credentials were not provided."},status=status.HTTP_401_UNAUTHORIZED)
+        return super().get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        user = get_user_from_token_request(request)
+        if user is None:
+            return Response(
+                {"detail": "Authentication credentials were not provided."},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+        return super().post(request, *args, **kwargs)
 
     def perform_create(self, serializer):
-        """Override perform_create to handle the creation of a new post with an optional image url. If image_url is provided in the request data, create a Photo object for the new post using that image url."""
         serializer.save()
 
-#check user password
+
+# API endpoint for logging in and getting a token
 class UserLoginAPIView(APIView):
     permission_classes = [AllowAny]
 
@@ -489,7 +506,7 @@ class UserLoginAPIView(APIView):
 
         if user is not None:
             profile = Profile.objects.filter(user=user).first()
-            # if the authenticated user doesn't have a profile, return an error response
+
             if profile is None:
                 return Response(
                     {'error': 'This user does not have a MiniInsta profile.'},
@@ -498,7 +515,12 @@ class UserLoginAPIView(APIView):
 
             token, created = Token.objects.get_or_create(user=user)
 
-            # return the token and profile id in the response
-            return Response({'token': token.key,'profile_id': profile.pk,},status=status.HTTP_200_OK)
+            return Response(
+                {'token': token.key, 'profile_id': profile.pk},
+                status=status.HTTP_200_OK
+            )
 
-        return Response({'error': 'Invalid Credentials'},status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {'error': 'Invalid Credentials'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
