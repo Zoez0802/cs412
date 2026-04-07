@@ -438,6 +438,20 @@ class UnlikePostView(LoginRequiredMixin, TemplateView):
         return reverse('login')
     
 
+#helper
+def get_user_from_token_request(request):
+    token_key = request.GET.get('token')
+
+    if token_key is None:
+        return None
+
+    try:
+        token = Token.objects.get(key=token_key)
+        return token.user
+    except Token.DoesNotExist:
+        return None
+    
+
 # views for API endpoints
 class ProfileListAPIView(generics.ListAPIView):
     """Return all profiles."""
@@ -472,13 +486,21 @@ class ProfilePostsAPIView(generics.ListAPIView):
 class ProfileFeedAPIView(generics.ListAPIView):
     """Return feed for one profile."""
     serializer_class = PostSerializer
-    #update for authentication and permission
-    permission_classes = [IsAuthenticated]
-    authentication_classes = [TokenAuthentication]
+
+    def get(self, request, *args, **kwargs):
+        user = get_user_from_token_request(request)
+
+        if user is None:
+            return Response(
+                {"detail": "Authentication credentials were not provided."},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+
+        return super().get(request, *args, **kwargs)
 
     def get_queryset(self):
         profile = Profile.objects.get(pk=self.kwargs["pk"])
-        return profile.get_post_feed()  
+        return profile.get_post_feed()
 
 
 class PostListCreateAPIView(generics.ListCreateAPIView):
