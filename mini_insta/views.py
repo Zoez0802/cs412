@@ -6,6 +6,7 @@ from urllib import request, response, response
 
 from django.views.generic import DetailView, ListView, CreateView, TemplateView, UpdateView, DeleteView, UpdateView, CreateView
 from django.urls import reverse
+from requests import post
 from .models import Profile, Post, Photo, Follow, Like
 from .forms import CreatePostForm, UpdateProfileForm, CreateProfileForm
 from django.shortcuts import redirect, render #added for task 3 - a5
@@ -530,9 +531,18 @@ class PostListCreateAPIView(generics.ListCreateAPIView):
             return super().post(request, *args, **kwargs)
 
     def perform_create(self, serializer):
-        """Override perform_create to handle the creation of a new post with an optional image url. If image_url is provided in the request data, create a Photo object for the new post using that image url."""
+        """Override perform_create to handle the creation of a new post with an optional image url. 
+        If image_url is provided in the request data, create a Photo object for the new post using that image url.
+        """
         serializer.save()
+        # after the post is created, check if there is an image_url in the request data, if so, create a Photo object for the new post
+        image_url = self.request.data.get('image_url')
 
+        if image_url:
+            Photo.objects.create(
+                post=post,
+                image_url=image_url
+            )
 #check user password
 class UserLoginAPIView(APIView):
     permission_classes = [AllowAny]
