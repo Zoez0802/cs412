@@ -24,21 +24,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authentication import TokenAuthentication
 
-# helper function to get user from token in request (either GET or POST)
-def get_user_from_token_request(request):
-    token_key = request.GET.get('token')
 
-    if token_key is None:
-        token_key = request.data.get('token')
-
-    if token_key is None:
-        return None
-
-    try:
-        token = Token.objects.get(key=token_key)
-        return token.user
-    except Token.DoesNotExist:
-        return None
     
 
 class ProfileListView(ListView):
@@ -438,9 +424,13 @@ class UnlikePostView(LoginRequiredMixin, TemplateView):
         return reverse('login')
     
 
-#helper
+
+# helper function to get user from token in request (either GET or POST)
 def get_user_from_token_request(request):
     token_key = request.GET.get('token')
+
+    if token_key is None:
+        token_key = request.data.get('token')
 
     if token_key is None:
         return None
@@ -450,7 +440,6 @@ def get_user_from_token_request(request):
         return token.user
     except Token.DoesNotExist:
         return None
-    
 
 # views for API endpoints
 class ProfileListAPIView(generics.ListAPIView):
@@ -466,17 +455,37 @@ class ProfileDetailAPIView(generics.RetrieveAPIView):
     """Return one profile by id."""
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
-    #update for authentication and permission
-    permission_classes = [IsAuthenticated]
-    authentication_classes = [TokenAuthentication]
+
+#overrides the default GET behavior to add authentication. 
+# If the token is missing or invalid, return a 401 Unauthorized response. 
+# Otherwise, proceed with the normal GET behavior to return the profile details.
+    def get(self, request, *args, **kwargs):
+        user = get_user_from_token_request(request)
+
+        if user is None:
+            return Response(
+                {"detail": "Authentication credentials were not provided."},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+
+        return super().get(request, *args, **kwargs)
 
 
 class ProfilePostsAPIView(generics.ListAPIView):
     """Return all posts for one profile."""
     serializer_class = PostSerializer
-    #update for authentication and permission
-    permission_classes = [IsAuthenticated]
-    authentication_classes = [TokenAuthentication]
+
+# Similar to ProfileDetailAPIView, we override the GET method to check for authentication before returning the posts for the profile. 
+    def get(self, request, *args, **kwargs):
+        user = get_user_from_token_request(request)
+
+        if user is None:
+            return Response(
+                {"detail": "Authentication credentials were not provided."},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+
+        return super().get(request, *args, **kwargs)
 
     def get_queryset(self):
         profile = Profile.objects.get(pk=self.kwargs["pk"])
@@ -488,7 +497,7 @@ class ProfileFeedAPIView(generics.ListAPIView):
     serializer_class = PostSerializer
 
     def get(self, request, *args, **kwargs):
-        user = get_user_from_token_request(request)
+        user = get_user_from_token_request(request) # use the helper method to get the user from the token in the request
 
         if user is None:
             return Response(
@@ -508,9 +517,17 @@ class PostListCreateAPIView(generics.ListCreateAPIView):
 
     queryset = Post.objects.all()
     serializer_class = CreatePostSerializer
-    #update for authentication and permission
-    permission_classes = [IsAuthenticated]
-    authentication_classes = [TokenAuthentication]
+
+    def post(self, request, *args, **kwargs):
+            user = get_user_from_token_request(request)
+
+            if user is None:
+                return Response(
+                    {"detail": "Authentication credentials were not provided."},
+                    status=status.HTTP_401_UNAUTHORIZED
+                )
+
+            return super().post(request, *args, **kwargs)
 
     def perform_create(self, serializer):
         """Override perform_create to handle the creation of a new post with an optional image url. If image_url is provided in the request data, create a Photo object for the new post using that image url."""
