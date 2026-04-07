@@ -520,15 +520,46 @@ class PostListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = CreatePostSerializer
 
     def post(self, request, *args, **kwargs):
-            user = get_user_from_token_request(request)
+        user = get_user_from_token_request(request)
 
-            if user is None:
-                return Response(
-                    {"detail": "Authentication credentials were not provided."},
-                    status=status.HTTP_401_UNAUTHORIZED
-                )
+        if user is None:
+            return Response(
+                {"detail": "Authentication credentials were not provided."},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
 
-            return super().post(request, *args, **kwargs)
+        profile_id = request.data.get('profile')
+        caption = request.data.get('caption')
+        image_url = request.data.get('image_url')
+
+        try:
+            profile = Profile.objects.get(pk=profile_id)
+        except Profile.DoesNotExist:
+            return Response(
+                {"error": "Profile not found."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if profile.user != user:
+            return Response(
+                {"error": "You can only create posts for your own profile."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        serializer = CreatePostSerializer(data={
+            'profile': profile_id,
+            'caption': caption,
+        })
+
+        if serializer.is_valid():
+            post = serializer.save()
+
+            if image_url:
+                Photo.objects.create(post=post, image_url=image_url)
+
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def perform_create(self, serializer):
         """Override perform_create to handle the creation of a new post with an optional image url. 
