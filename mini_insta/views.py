@@ -515,6 +515,9 @@ class UserLoginAPIView(APIView):
 from django.http import HttpResponse
 from django.core.management import call_command
 
-def run_migration(request):
-    call_command('migrate')
-    return HttpResponse("Migration complete")
+def run_migrate(request):
+    try:
+        call_command('migrate', interactive=False, run_syncdb=True)
+        return HttpResponse("OK: migrated")
+    except Exception as e:
+        return HttpResponse("ERROR: " + str(e))
