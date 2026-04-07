@@ -477,7 +477,7 @@ class PostListCreateAPIView(generics.ListCreateAPIView):
         """Override perform_create to handle the creation of a new post with an optional image url. If image_url is provided in the request data, create a Photo object for the new post using that image url."""
         serializer.save()
 
-
+#check user password
 class UserLoginAPIView(APIView):
     permission_classes = [AllowAny]
 
@@ -489,7 +489,7 @@ class UserLoginAPIView(APIView):
 
         if user is not None:
             profile = Profile.objects.filter(user=user).first()
-
+            # if the authenticated user doesn't have a profile, return an error response
             if profile is None:
                 return Response(
                     {'error': 'This user does not have a MiniInsta profile.'},
@@ -498,15 +498,7 @@ class UserLoginAPIView(APIView):
 
             token, created = Token.objects.get_or_create(user=user)
 
-            return Response(
-                {
-                    'token': token.key,
-                    'profile_id': profile.pk,
-                },
-                status=status.HTTP_200_OK
-            )
+            # return the token and profile id in the response
+            return Response({'token': token.key,'profile_id': profile.pk,},status=status.HTTP_200_OK)
 
-        return Response(
-            {'error': 'Invalid Credentials'},
-            status=status.HTTP_400_BAD_REQUEST
-        )
+        return Response({'error': 'Invalid Credentials'},status=status.HTTP_400_BAD_REQUEST)
