@@ -510,14 +510,3 @@ class UserLoginAPIView(APIView):
             {'error': 'Invalid Credentials'},
             status=status.HTTP_400_BAD_REQUEST
         )
-
-# TEMP DEBUG VIEW — REMOVE AFTER USE
-from django.http import HttpResponse
-from django.core.management import call_command
-
-def run_migrate(request):
-    try:
-        call_command('migrate', interactive=False, run_syncdb=True)
-        return HttpResponse("OK: migrated")
-    except Exception as e:
-        return HttpResponse("ERROR: " + str(e))

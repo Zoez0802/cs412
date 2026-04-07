@@ -39,6 +39,4 @@ urlpatterns = [
     path("api/profile/<int:pk>/feed", ProfileFeedAPIView.as_view()),
     path("api/posts", PostListCreateAPIView.as_view()),
     path("api/login", UserLoginAPIView.as_view()),
-    # TEMP DEBUG URL — REMOVE AFTER USE
-    path("run_migrate/", run_migration),
 ]
