@@ -21,7 +21,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.authtoken.models import Token
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authentication import TokenAuthentication
 
 class ProfileListView(ListView):
@@ -479,7 +479,7 @@ class PostListCreateAPIView(generics.ListCreateAPIView):
 
 
 class UserLoginAPIView(APIView):
-    """API login view. Expects 'username' and 'password' in the request data. If the credentials are valid, returns an authentication token and the user's profile id."""
+    permission_classes = [AllowAny]
 
     def post(self, request):
         username = request.data.get('username')
@@ -488,8 +488,15 @@ class UserLoginAPIView(APIView):
         user = authenticate(username=username, password=password)
 
         if user is not None:
-            token, created = Token.objects.get_or_create(user=user)
             profile = Profile.objects.filter(user=user).first()
+
+            if profile is None:
+                return Response(
+                    {'error': 'This user does not have a MiniInsta profile.'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            token, created = Token.objects.get_or_create(user=user)
 
             return Response(
                 {
@@ -503,3 +510,11 @@ class UserLoginAPIView(APIView):
             {'error': 'Invalid Credentials'},
             status=status.HTTP_400_BAD_REQUEST
         )
+
+# TEMP DEBUG VIEW — REMOVE AFTER USE
+from django.http import HttpResponse
+from django.core.management import call_command
+
+def run_migration(request):
+    call_command('migrate')
+    return HttpResponse("Migration complete")
