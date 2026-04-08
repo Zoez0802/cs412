@@ -2,11 +2,9 @@
 # Author: Minjie Zuo (minjiez@bu.edu), 2/11/2026 , 2/18/2026
 # This file defines the class-based views for the Mini-Insta application.
 
-from urllib import request, response, response
 
-from django.views.generic import DetailView, ListView, CreateView, TemplateView, UpdateView, DeleteView, UpdateView, CreateView
+from django.views.generic import DetailView, ListView, CreateView, TemplateView, UpdateView, DeleteView
 from django.urls import reverse
-from requests import post
 from .models import Profile, Post, Photo, Follow, Like
 from .forms import CreatePostForm, UpdateProfileForm, CreateProfileForm
 from django.shortcuts import redirect, render #added for task 3 - a5
@@ -19,7 +17,6 @@ from rest_framework import generics
 from rest_framework.response import Response
 from .serializers import *
 from rest_framework.views import APIView
-from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -519,6 +516,17 @@ class PostListCreateAPIView(generics.ListCreateAPIView):
     queryset = Post.objects.all()
     serializer_class = CreatePostSerializer
 
+    def get(self, request, *args, **kwargs):
+        user = get_user_from_token_request(request)
+
+        if user is None:
+            return Response(
+                {"detail": "Authentication credentials were not provided."},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+
+        return super().get(request, *args, **kwargs)
+
     def post(self, request, *args, **kwargs):
         user = get_user_from_token_request(request)
 
@@ -532,6 +540,12 @@ class PostListCreateAPIView(generics.ListCreateAPIView):
         caption = request.data.get('caption')
         image_url = request.data.get('image_url')
 
+        if profile_id is None:
+            return Response(
+                {"error": "Missing profile id."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
         try:
             profile = Profile.objects.get(pk=profile_id)
         except Profile.DoesNotExist:
@@ -542,38 +556,24 @@ class PostListCreateAPIView(generics.ListCreateAPIView):
 
         if profile.user != user:
             return Response(
-                {"error": "You can only create posts for your own profile."},
+                {"error": "You can only create a post for your own profile."},
                 status=status.HTTP_403_FORBIDDEN
             )
 
-        serializer = CreatePostSerializer(data={
-            'profile': profile_id,
-            'caption': caption,
-        })
-
-        if serializer.is_valid():
-            post = serializer.save()
-
-            if image_url:
-                Photo.objects.create(post=post, image_url=image_url)
-
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def perform_create(self, serializer):
-        """Override perform_create to handle the creation of a new post with an optional image url. 
-        If image_url is provided in the request data, create a Photo object for the new post using that image url.
-        """
-        serializer.save()
-        # after the post is created, check if there is an image_url in the request data, if so, create a Photo object for the new post
-        image_url = self.request.data.get('image_url')
+        post = Post.objects.create(
+            profile=profile,
+            caption=caption
+        )
 
         if image_url:
             Photo.objects.create(
                 post=post,
                 image_url=image_url
             )
+
+        serializer = PostSerializer(post)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
 #check user password
 class UserLoginAPIView(APIView):
     permission_classes = [AllowAny]
