@@ -474,9 +474,11 @@ class ProfilePostsAPIView(generics.ListAPIView):
     serializer_class = PostSerializer
 
 # Similar to ProfileDetailAPIView, we override the GET method to check for authentication before returning the posts for the profile. 
+# manually check token before allowing access
     def get(self, request, *args, **kwargs):
         user = get_user_from_token_request(request)
 
+        ## if token missing or invalid then reject request
         if user is None:
             return Response(
                 {"detail": "Authentication credentials were not provided."},
@@ -506,10 +508,12 @@ class ProfileFeedAPIView(generics.ListAPIView):
         return super().get(request, *args, **kwargs)
 
     def get_queryset(self):
+        # get profile from url
         profile = Profile.objects.get(pk=self.kwargs["pk"])
         return profile.get_post_feed()
 
 
+#for add_post API endpoint
 class PostListCreateAPIView(generics.ListCreateAPIView):
     """Return all posts, or create a new post. For creating a new post, the request body should include the profile id and caption, and optionally an image url."""
 
@@ -528,6 +532,7 @@ class PostListCreateAPIView(generics.ListCreateAPIView):
         return super().get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
+        # manually check token before allowing access
         user = get_user_from_token_request(request)
 
         if user is None:
@@ -536,6 +541,7 @@ class PostListCreateAPIView(generics.ListCreateAPIView):
                 status=status.HTTP_401_UNAUTHORIZED
             )
 
+        # read data from request body
         profile_id = request.data.get('profile')
         caption = request.data.get('caption')
         image_url = request.data.get('image_url')
@@ -546,6 +552,7 @@ class PostListCreateAPIView(generics.ListCreateAPIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
+        # check if profile exists
         try:
             profile = Profile.objects.get(pk=profile_id)
         except Profile.DoesNotExist:
@@ -554,17 +561,20 @@ class PostListCreateAPIView(generics.ListCreateAPIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
+        # only post on their own profile
         if profile.user != user:
             return Response(
                 {"error": "You can only create a post for your own profile."},
                 status=status.HTTP_403_FORBIDDEN
             )
 
+        # create the post
         post = Post.objects.create(
             profile=profile,
             caption=caption
         )
 
+        #image could be optional
         if image_url:
             Photo.objects.create(
                 post=post,
@@ -574,7 +584,7 @@ class PostListCreateAPIView(generics.ListCreateAPIView):
         serializer = PostSerializer(post)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     
-#check user password
+#login API
 class UserLoginAPIView(APIView):
     permission_classes = [AllowAny]
 
