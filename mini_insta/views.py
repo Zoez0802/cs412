@@ -440,6 +440,16 @@ def get_user_from_token_request(request):
         return None
 
 # views for API endpoints
+# i think this is extra because i just want to add this so i can
+#have a direct url to mini_insta/api
+class ApiRootView(APIView):
+    def get(self, request):
+        return Response({
+            "profiles": "/api/profiles",
+            "posts": "/api/posts",
+            "login": "/api/login"
+        })
+
 class ProfileListAPIView(generics.ListAPIView):
     """Return all profiles."""
     queryset = Profile.objects.all()
