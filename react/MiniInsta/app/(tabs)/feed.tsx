@@ -67,6 +67,8 @@ useEffect(() => {
 
     return (
       <View style={styles.box}>
+        <Text>@{item.profile?.username}</Text>
+
         <Text style={styles.postText}>
           {item.caption ? item.caption : 'No caption'}
         </Text>

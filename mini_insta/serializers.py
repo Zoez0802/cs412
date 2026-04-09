@@ -30,9 +30,9 @@ class PhotoSerializer(serializers.ModelSerializer):
 
 class PostSerializer(serializers.ModelSerializer):
     """Serialize post and its photos"""
-
+    profile = ProfileSerializer()
     photos = serializers.SerializerMethodField() #get all photos for this post and serialize them
-    profile = ProfileSerializer(read_only=True)#nested serializer to show profile info in post
+    
     class Meta:
         model = Post
         fields = ['id', 'profile', 'caption', 'timestamp', 'photos']
