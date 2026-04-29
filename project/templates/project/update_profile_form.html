@@ -1,0 +1,15 @@
+<!-- project/templates/project/update_profile_form.html -->
+<!-- Author: Minjie Zuo, 4/16/2026 -->
+<!-- This is the template for the update profile form in the restaurant review and recommendation app. -->
+
+{% extends "project/base.html" %}
+
+{% block content %}
+<h1>Update Profile</h1>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Update Profile">
+</form>
+{% endblock %}

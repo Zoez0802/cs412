@@ -1,0 +1,52 @@
+<!-- project/templates/project/create_review_form.html -->
+<!-- Author: Minjie Zuo, 4/16/2026 -->
+<!-- This is the template for the create review form in the restaurant review and recommendation app. -->
+
+{% extends "project/base.html" %}
+
+{% block content %}
+
+<div class="rev-box">
+  <h1 class="rev-title">Write a Review for {{ restaurant.name }}</h1>
+  <p class="rev-sub">Share your experience. You can upload up to 4 photos.</p>
+
+  <form method="post" enctype="multipart/form-data" class="rev-form">
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+      <div class="err">
+        {{ form.non_field_errors }}
+      </div>
+    {% endif %}
+
+    <div class="grp">
+      <label>Rating</label>
+      {{ form.rating }}
+    </div>
+
+    <div class="grp">
+      <label>Review</label>
+      {{ form.comment_text }}
+    </div>
+
+    <div class="grp">
+      <label>Photos</label>
+
+      <!--
+        "multiple" lets user select multiple files at once.
+        The backend limits it to max 4 images.
+      -->
+      <input type="file" name="images" multiple accept="image/*">
+
+      <div class="hint">0–4 images allowed</div>
+    </div>
+
+    <div class="row">
+      <input type="submit" value="Post" class="btn-main">
+      <a href="{% url 'show_restaurant' restaurant.pk %}" class="btn-link">Cancel</a>
+    </div>
+
+  </form>
+</div>
+
+{% endblock %}

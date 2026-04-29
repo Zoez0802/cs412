@@ -1,0 +1,10 @@
+<!-- project/templates/project/logged_out.html -->
+<!-- Author: Minjie Zuo, 4/15/2026 -->
+<!-- This is the template for the logged out page in the restaurant review and recommendation app. -->
+
+{% extends "project/base.html" %}
+
+{% block content %}
+<h2>You have been logged out.</h2>
+<p><a href="{% url 'login' %}">Log in again</a></p>
+{% endblock %}

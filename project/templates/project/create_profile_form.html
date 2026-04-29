@@ -1,0 +1,25 @@
+<!-- project/templates/project/create_profile_form.html -->
+<!-- Author: Minjie Zuo, 4/15/2026 -->
+<!-- This is the template for the create profile form in the restaurant review and recommendation app. -->
+{% extends "project/base.html" %}
+{% load static %}
+
+
+{% block content %}
+<h1>Create Profile</h1>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    {{ user_form.errors }}
+    {{ form.errors }}
+
+    <h2>Account</h2>
+    {{ user_form.as_p }}
+
+    <h2>Profile</h2>
+    {{ form.as_p }}
+
+    <input type="submit" value="Create Account">
+</form>
+{% endblock %}

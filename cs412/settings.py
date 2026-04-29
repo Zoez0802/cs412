@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     "rest_framework", ## NEW: Django REST framework
     "dadjokes",
     'rest_framework.authtoken',
+    'project',#final project
 ]
 
 MIDDLEWARE = [

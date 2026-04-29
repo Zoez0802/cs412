@@ -1,0 +1,214 @@
+<!-- project/templates/project/show_profile.html -->
+<!-- Author: Minjie Zuo, 4/16/2026-4/28/2026 -->
+<!-- This is the template for displaying a user's profile in the restaurant review and recommendation app. -->
+
+{% extends "project/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="card">
+
+  <div class="top">
+    <div class="ava">
+      {% if profile.profile_image %}
+        <img class="ava-img" src="{{ profile.profile_image.url }}" alt="{{ profile.display_name }}">
+      {% else %}
+        <img class="ava-img" src="{% static 'R.png' %}" alt="default profile image">
+      {% endif %}
+    </div>
+
+    <div class="info">
+      <div class="name">
+        {{ profile.display_name }}
+      </div>
+
+      <div class="user">
+        @{{ profile.user.username }}
+      </div>
+
+      {% if profile.bio_text %}
+        <div class="bio">
+          {{ profile.bio_text }}
+        </div>
+      {% endif %}
+
+      {% if request.user.is_authenticated and request.user == profile.user %}
+        <div class="edit-row profile-action-row">
+          <a class="edit-btn" href="{% url 'update_profile' %}">Update Profile</a>
+
+          <a class="folder-btn profile-folder-btn" href="{% url 'show_profile' %}?show=folders">
+            Folders
+          </a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <strong>Reviews</strong>
+      <div>
+        <a class="stat-num-link" href="{% url 'show_profile' %}?show=reviews">
+          {{ profile.get_num_reviews }}
+        </a>
+      </div>
+    </div>
+
+    <div class="stat">
+      <strong>Favorites</strong>
+      <div>
+        <a class="stat-num-link" href="{% url 'show_profile' %}?show=favorites">
+          {{ profile.get_num_favorites }}
+        </a>
+      </div>
+    </div>
+  </div>
+
+  {% if show_section == "favorites" %}
+    <div class="posts">
+      <div class="sec">My Favorite Restaurants</div>
+
+    {% for fav in profile.get_all_favorites %}
+      <div class="post">
+        <div class="post-head">
+          <strong>
+            <a class="rest-link" href="{% url 'show_restaurant' fav.restaurant.pk %}">
+              {{ fav.restaurant.name }}
+            </a>
+          </strong>
+
+          <span class="rate">
+            {{ fav.restaurant.cuisine }} · {{ fav.restaurant.area }} · {{ fav.restaurant.price_level }}
+          </span>
+        </div>
+
+        <div class="time">
+          Added on {{ fav.created_at }}
+        </div>
+      </div>
+    {% empty %}
+      <div>No favorite restaurants yet.</div>
+    {% endfor %}
+    </div>
+
+  {% elif show_section == "folders" %}
+    <div class="posts">
+      <div class="sec">My Folders</div>
+
+      <div class="folder-grid">
+        {% for folder in folders %}
+          <a class="desktop-folder"
+            href="{% url 'show_profile' %}?show=folder_detail&folder_id={{ folder.pk }}">
+            <div class="desktop-folder-tab"></div>
+
+            <div class="desktop-folder-body">
+              <div class="desktop-folder-name">
+                {{ folder.name }}
+              </div>
+
+              <div class="desktop-folder-count">
+                {{ folder.get_all_items.count }} restaurants
+              </div>
+            </div>
+          </a>
+        {% empty %}
+          <div>No folders yet. Save a restaurant into a folder first.</div>
+        {% endfor %}
+      </div>
+    </div>
+
+  {% elif show_section == "folder_detail" %}
+    <div class="posts">
+
+      <div class="folder-detail-head">
+        <a class="folder-back-btn" href="{% url 'show_profile' %}?show=folders">
+          ← Back to folders
+        </a>
+      </div>
+
+      {% if selected_folder %}
+        <div class="open-folder-box">
+          <div class="open-folder-title">
+            {{ selected_folder.name }}
+          </div>
+
+          <div class="open-folder-sub">
+            Restaurants saved in this folder
+          </div>
+
+          {% for item in folder_items %}
+            <div class="post">
+              <div class="post-head">
+                <strong>
+                <a class="rest-link"
+                  href="{% url 'show_restaurant' item.restaurant.pk %}?from_folder={{ selected_folder.pk }}">
+                  {{ item.restaurant.name }}
+                </a>
+                </strong>
+
+                <span class="rate">
+                  {{ item.restaurant.cuisine }} · {{ item.restaurant.area }} · {{ item.restaurant.price_level }}
+                </span>
+              </div>
+
+              <div class="time">
+                Saved on {{ item.created_at }}
+              </div>
+            </div>
+          {% empty %}
+            <div>This folder is empty.</div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div>This folder does not exist.</div>
+      {% endif %}
+    </div>
+
+  {% else %}
+    <div class="posts">
+      <div class="sec">My Reviews</div>
+
+          {% for review in profile.get_all_reviews %}
+            <div class="post">
+              <div class="post-head">
+                <strong>
+                  <a class="rest-link" href="{% url 'show_restaurant' review.restaurant.pk %}">
+                    {{ review.restaurant.name }}
+                  </a>
+                </strong>
+                <span class="rate">Rating: {{ review.rating }}/5</span>
+              </div>
+
+          <div class="time">
+            {{ review.created_at }}
+          </div>
+
+          {% if review.comment_text %}
+            <div class="text">
+              {{ review.comment_text }}
+            </div>
+          {% endif %}
+
+          <div class="rev-pics">
+            {% for photo in review.get_all_photos %}
+              <img class="rev-pic" src="{{ photo.image_file.url }}" alt="review photo">
+            {% endfor %}
+          </div>
+
+          {% if review.profile.user == request.user %}
+            <form method="post" action="{% url 'delete_review' review.pk %}" style="display:inline;">
+              {% csrf_token %}
+              <button class="trash-btn" title="Delete review">🗑</button>
+            </form>
+          {% endif %}
+        </div>
+      {% empty %}
+        <div>No reviews yet.</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+</div>
+
+{% endblock %}

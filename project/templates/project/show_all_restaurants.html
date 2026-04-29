@@ -1,0 +1,553 @@
+<!-- project/templates/project/show_all_restaurants.html -->
+<!--Author: Minjie Zuo, 4.16.2026-4.28.2026-->
+<!--
+    This template displays all restaurants in the app.
+    It uses Django template rendering for the restaurant list.
+    It also includes a stretch-feature map built with Leaflet
+    and a small amount of JavaScript to show restaurant locations.
+-->
+
+{% extends "project/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<!--for give a filter bar-->
+<!-- Filter bar: lets the user narrow the restaurant list by area, cuisine, and price.
+     The form submits using GET so the selected filters appear in the URL. -->
+<div class="top-row">
+
+  <div class="top-bar">
+    <form method="get" class="bar-form">
+
+      <div class="filters">
+        <div class="field">
+          <label for="id_area">Area</label>
+          <select name="area" id="id_area">
+            <option value="">All</option>
+            {% for value, label in area_choices %}
+              <option value="{{ value }}" {% if selected_area == value %}selected{% endif %}>
+                {{ label }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="id_cuisine">Cuisine</label>
+          <select name="cuisine" id="id_cuisine">
+            <option value="">All</option>
+            {% for value, label in cuisine_choices %}
+              <option value="{{ value }}" {% if selected_cuisine == value %}selected{% endif %}>
+                {{ label }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="id_price">Price</label>
+          <select name="price" id="id_price">
+            <option value="">All</option>
+            {% for value, label in price_choices %}
+              <option value="{{ value }}" {% if selected_price == value %}selected{% endif %}>
+                {{ label }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!--let user sort based on preference-->
+        <div class="field">
+          <label for="id_sort">Sort By</label>
+          <select name="sort" id="id_sort">
+            <option value="">Default</option>
+            <option value="rating_high" {% if selected_sort == "rating_high" %}selected{% endif %}>
+              Rating: High to Low
+            </option>
+            <option value="rating_low" {% if selected_sort == "rating_low" %}selected{% endif %}>
+              Rating: Low to High
+            </option>
+            <option value="reviews_high" {% if selected_sort == "reviews_high" %}selected{% endif %}>
+              Reviews: High to Low
+            </option>
+            <option value="reviews_low" {% if selected_sort == "reviews_low" %}selected{% endif %}>
+              Reviews: Low to High
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button type="submit" class="apply-btn">Apply</button>
+        <a href="{% url 'show_all_restaurants' %}" class="clear-btn">Clear</a>
+      </div>
+
+    </form>
+
+  </div>
+
+
+<div class="side-tools">
+<!--an extend feature that it should help user random recommend a resturant-->
+  <div class="side-buttons">
+  <form method="get">
+    <input type="hidden" name="area" value="{{ selected_area }}">
+    <input type="hidden" name="cuisine" value="{{ selected_cuisine }}">
+    <input type="hidden" name="price" value="{{ selected_price }}">
+    <input type="hidden" name="sort" value="{{ selected_sort }}">
+
+  {% if help_me_decide == "1" %}
+    <a href="{% url 'show_all_restaurants' %}?area={{ selected_area }}&cuisine={{ selected_cuisine }}&price={{ selected_price }}&sort={{ selected_sort }}"
+      class="decide-btn tool-link-btn">
+      Help Me Decide
+    </a>
+  {% else %}
+    <button type="submit" name="help_me_decide" value="1" class="decide-btn">
+      Help Me Decide
+    </button>
+  {% endif %}
+  </form>
+
+<!-- an extend feature that it showing the trending resturant-->
+    <form method="get">
+      <input type="hidden" name="area" value="{{ selected_area }}">
+      <input type="hidden" name="cuisine" value="{{ selected_cuisine }}">
+      <input type="hidden" name="price" value="{{ selected_price }}">
+      <input type="hidden" name="sort" value="{{ selected_sort }}">
+
+    {% if trending == "1" %}
+      <a href="{% url 'show_all_restaurants' %}?area={{ selected_area }}&cuisine={{ selected_cuisine }}&price={{ selected_price }}&sort={{ selected_sort }}"
+        class="decide-btn trend-side-btn tool-link-btn">
+        Trending Now
+      </a>
+    {% else %}
+      <button type="submit" name="trending" value="1" class="decide-btn trend-side-btn">
+        Trending Now
+      </button>
+    {% endif %}
+    </form>
+    </div>
+<!--search-->   
+
+    <div class="search-wrap {% if selected_search %}open{% endif %}" id="searchWrap">
+      <button type="button" class="search-icon-btn" onclick="openSearchBox()" title="Search restaurant">
+        <span class="search-circle"></span>
+        <span class="search-line"></span>
+      </button>
+
+      <form method="get"
+            class="search-form {% if selected_search %}show-search{% endif %}"
+            id="searchForm">
+
+        <input type="hidden" name="area" value="{{ selected_area }}">
+        <input type="hidden" name="cuisine" value="{{ selected_cuisine }}">
+        <input type="hidden" name="price" value="{{ selected_price }}">
+        <input type="hidden" name="sort" value="{{ selected_sort }}">
+
+        <input type="text"
+               name="q"
+               value="{{ selected_search }}"
+               class="search-input"
+               placeholder="Search restaurant name">
+
+        <button type="submit" class="search-submit">Search</button>
+
+        <a href="{% url 'show_all_restaurants' %}?area={{ selected_area }}&cuisine={{ selected_cuisine }}&price={{ selected_price }}&sort={{ selected_sort }}"
+          class="search-cancel">×</a>
+      </form>
+    </div>
+
+    </div>
+
+  </div>
+</div>
+
+
+
+<div class="home {% if recommended_restaurant or trending_restaurant %}with-pick{% endif %}">
+
+  <div class="main-side">
+  <div class="map-wrap">
+
+  {% if request.user.is_authenticated %}
+    <button type="button"
+            class="fav-toggle"
+            onclick="toggleFavMarkers(this)"
+            title="Show favorite locations">
+      <span class="fav-dot"></span>
+      <span class="fav-text">Favorites</span>
+    </button>
+  {% else %}
+    <button type="button"
+            class="fav-toggle"
+            onclick="alert('Please log in first to view your favorite restaurants.'); window.location.href='{% url 'login' %}?next={% url 'show_all_restaurants' %}';"
+            title="Login to view favorites">
+      <span class="fav-dot"></span>
+      <span class="fav-text">Favorites</span>
+    </button>
+  {% endif %}
+
+    <div id="map"></div>
+  </div>
+
+    <div class="list-wrap">
+      <div class="sec">Restaurants</div>
+
+  <div id="rest-list">
+    {% for r in restaurants %}
+      <div class="rest-card"
+          data-id="{{ r.pk }}"
+          data-name="{{ r.name }}"
+          data-cuisine="{{ r.cuisine }}"
+          data-area="{{ r.area }}"
+          data-price="{{ r.price_level }}"
+          data-favorite="{% if r.pk in favorite_ids %}yes{% else %}no{% endif %}"
+          data-rating="{% if r.get_average_rating %}{{ r.get_average_rating }}{% else %}No rating yet{% endif %}"
+          {% if r.latitude %}data-lat="{{ r.latitude }}"{% endif %}
+          {% if r.longitude %}data-lng="{{ r.longitude }}"{% endif %}>
+
+        <div class="rest-row">
+
+          <div class="rest-left">
+            {% if r.image_file %}
+              <img class="rest-img" src="{{ r.image_file.url }}" alt="{{ r.name }}">
+            {% else %}
+              <img class="rest-img" src="{% static 'R.png' %}" alt="default image">
+            {% endif %}
+          </div>
+
+          <div class="rest-right">
+            <div class="rest-line">
+              <a class="rest-name" href="{% url 'show_restaurant' r.pk %}">
+                {{ r.name }}
+              </a>
+              - {{ r.cuisine }} restaurant - {{ r.area }} - {{ r.price_level }}
+            </div>
+
+            <div class="rest-rate">
+              Average Rating:
+              {% if r.get_average_rating %}
+                {{ r.get_average_rating }}
+              {% else %}
+                No rating yet
+              {% endif %}
+            </div>
+
+            <div class="rest-rate">
+              Reviews: {{ r.get_num_reviews }}
+            </div>
+          </div>
+
+          {% if request.user.is_authenticated %}
+            {% if r.pk in saved_restaurant_ids %}
+              <a class="folder-btn folder-saved"
+                href="{% url 'add_to_folder' r.pk %}"
+                title="Already saved. Click to add to another folder.">
+                Saved
+              </a>
+            {% else %}
+              <a class="folder-btn"
+                href="{% url 'add_to_folder' r.pk %}"
+                title="Save to folder">
+                Save
+              </a>
+            {% endif %}
+          {% else %}
+            <a class="folder-btn"
+              href="{% url 'login' %}?next={% url 'add_to_folder' r.pk %}"
+              onclick="alert('Please log in first to save restaurants into folders.');"
+              title="Login to save to folder">
+              Save
+            </a>
+          {% endif %}
+
+        </div>
+      </div>
+
+    {% empty %}
+      <div>No restaurants match this filter</div>
+    {% endfor %}
+  </div>
+
+    </div>
+  </div>
+
+  {% if help_me_decide == "1" and recommended_restaurant %}
+    <div class="pick-side">
+      <div class="pick-box">
+        <div class="pick-title">Help Me Decide</div>
+        <div class="pick-sub">Here is a highly rated choice for you.</div>
+
+        {% if recommended_restaurant.image_file %}
+          <img class="pick-img" src="{{ recommended_restaurant.image_file.url }}" alt="{{ recommended_restaurant.name }}">
+        {% else %}
+          <img class="pick-img" src="{% static 'R.png' %}" alt="default restaurant image">
+        {% endif %}
+
+        <div class="pick-name">{{ recommended_restaurant.name }}</div>
+
+        <div class="pick-meta">
+          {{ recommended_restaurant.cuisine }} · {{ recommended_restaurant.area }} · {{ recommended_restaurant.price_level }}
+        </div>
+
+        <div class="pick-rate">
+          Overall Rating:
+          {% if recommended_restaurant.get_average_rating %}
+            {{ recommended_restaurant.get_average_rating }}
+          {% else %}
+            No rating yet
+          {% endif %}
+        </div>
+
+        {% if recommended_restaurant.description %}
+          <div class="pick-text">{{ recommended_restaurant.description }}</div>
+        {% endif %}
+
+        <a class="pick-link" href="{% url 'show_restaurant' recommended_restaurant.pk %}">
+          View Restaurant
+        </a>
+
+        <a class="pick-close"
+           href="{% url 'show_all_restaurants' %}?area={{ selected_area }}&cuisine={{ selected_cuisine }}&price={{ selected_price }}&sort={{ selected_sort }}">
+          Close
+        </a>
+      </div>
+    </div>
+  {% endif %}
+
+
+  {% if trending == "1" and trending_restaurant %}
+    <div class="pick-side">
+      <div class="pick-box">
+        <div class="pick-title">Trending Now</div>
+        <div class="pick-sub">The most popular choice right now.</div>
+
+        {% if trending_restaurant.image_file %}
+          <img class="pick-img"
+              src="{{ trending_restaurant.image_file.url }}"
+              alt="{{ trending_restaurant.name }}">
+        {% else %}
+          <img class="pick-img"
+              src="{% static 'R.png' %}"
+              alt="default restaurant image">
+        {% endif %}
+
+        <div class="pick-name">
+          {{ trending_restaurant.name }}
+        </div>
+
+        <div class="pick-meta">
+          {{ trending_restaurant.cuisine }} ·
+          {{ trending_restaurant.area }} ·
+          {{ trending_restaurant.price_level }}
+        </div>
+
+        <div class="pick-rate">
+          Overall Rating:
+          {% if trending_restaurant.get_average_rating %}
+            {{ trending_restaurant.get_average_rating }}
+          {% else %}
+            No rating yet
+          {% endif %}
+        </div>
+
+        
+        <div class="pick-text">
+          This restaurant has received {{ trending_restaurant.recent_review_count }} reviews
+          and {{ trending_restaurant.recent_favorite_count }} favorites in the past
+          {{ trending_days }} days.
+        </div>
+
+        <div class="pick-sub">Recent comments</div>
+
+        {% for review in trending_reviews %}
+          <div class="pick-text">
+            <strong>{{ review.profile.display_name }}:</strong>
+            {% if review.comment_text %}
+              {{ review.comment_text }}
+            {% else %}
+              No written comment.
+            {% endif %}
+          </div>
+        {% empty %}
+          <div class="pick-text">
+            No recent comments yet.
+          </div>
+        {% endfor %}
+
+        <div class="pick-actions">
+          <a class="pick-link" href="{% url 'show_restaurant' trending_restaurant.pk %}">
+            View Restaurant
+          </a>
+
+          <a class="pick-close"
+            href="{% url 'show_all_restaurants' %}?area={{ selected_area }}&cuisine={{ selected_cuisine }}&price={{ selected_price }}&sort={{ selected_sort }}">
+            Close
+          </a>
+        </div>
+
+    </div>
+  </div>
+{% endif %}
+
+</div>
+
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+  crossorigin=""
+/>
+
+
+
+<!--
+  Stretch feature:
+  This page includes a small amount of JavaScript using the Leaflet library
+  to show restaurant locations on an interactive map. This map feature was added 
+  as an optional enhancement after the main Django functionality was working.
+-->
+<script
+  src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+  crossorigin=""
+></script>
+
+<script>
+    //Create the map and start with a default Boston-area view.
+    //so page have a usable starting point before marker positions are processed.
+    const map = L.map('map').setView([42.3496, -71.1067], 14);
+
+    //Add the base map tiles.
+    //Leaflet handles the map display, while Django still provides the restaurant data.
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+        subdomains: 'abcd',
+        maxZoom: 20
+    }).addTo(map);
+
+
+    // I create a custom red marker icon so restaurant points stand out more clearly.
+    const redIcon = L.icon({
+        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+        shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41]
+    });
+
+    const blueIcon = L.icon({
+        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',
+        shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41]
+    });
+
+
+    // Select all restaurant cards rendered by Django in the template.
+    // Each card stores restaurant information in data- attributes.
+    const cards = document.querySelectorAll('.rest-card');
+    const list = document.getElementById('rest-list');
+
+    // when click on the marker,move the matching restaurant card to the top
+    function moveTop(id) {
+        const card = document.querySelector('.rest-card[data-id="' + id + '"]');
+        if (card) {
+            list.prepend(card);
+        }
+    }
+
+    const points = [];
+    const favMarkers = [];
+
+    // Loop through each Django-rendered restaurant card and create a marker
+    // only if latitude and longitude data are available.
+    // Note: The latitude and longitude data are not included in the initial implementation, 
+    // but I added as additional fields in the Restaurant model and passed to the template.
+    cards.forEach(function(card) {
+        const lat = parseFloat(card.dataset.lat);
+        const lng = parseFloat(card.dataset.lng);
+        
+
+        if (!isNaN(lat) && !isNaN(lng)) {
+            const id = card.dataset.id;
+            const name = card.dataset.name;
+            const cuisine = card.dataset.cuisine;
+            const area = card.dataset.area;
+            const price = card.dataset.price;
+            const rating = card.dataset.rating;
+            const isFavorite = card.dataset.favorite;
+
+            const popup = `
+                <strong>${name}</strong><br>
+                ${cuisine} restaurant - ${area} - ${price}<br>
+                Average Rating: ${rating}
+            `;
+
+            const marker = L.marker([lat, lng], { icon: redIcon }).addTo(map);
+            if (isFavorite === "yes") {
+              favMarkers.push(marker);
+            }
+            marker.bindPopup(popup);
+
+          // Connect each marker to its matching restaurant card in the list.
+            marker.on('click', function() {
+                moveTop(id);
+            });
+
+            points.push([lat, lng]);
+        }
+    });
+
+    // If there are restaurant markers, resize the map view
+    // so all of them are visible on screen.
+    if (points.length > 0) {
+        map.fitBounds(points, { padding: [30, 30] });
+    }
+
+    
+    let favOn = false;
+
+    function toggleFavMarkers(btn) {
+        favOn = !favOn;
+
+        favMarkers.forEach(function(marker) {
+            marker.setIcon(favOn ? blueIcon : redIcon);
+        });
+
+        if (favOn) {
+            btn.classList.add("active");
+            btn.querySelector(".fav-text").textContent = "Showing Favorites";
+            btn.title = "Hide favorite locations";
+        } else {
+            btn.classList.remove("active");
+            btn.querySelector(".fav-text").textContent = "Favorites";
+            btn.title = "Show favorite locations";
+        }
+    }
+
+    function openSearchBox() {
+        const wrap = document.getElementById("searchWrap");
+        const input = wrap.querySelector(".search-input");
+
+        wrap.classList.add("open");
+        input.focus();
+    }
+
+    function closeSearchBox() {
+        const wrap = document.querySelector(".search-wrap");
+        const form = document.getElementById("searchForm");
+        const input = form.querySelector(".search-input");
+
+        input.value = "";
+        form.classList.remove("show-search");
+        wrap.classList.remove("search-open");
+    }
+</script>
+    
+
+{% endblock %}

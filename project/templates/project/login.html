@@ -1,0 +1,22 @@
+<!-- project/templates/project/login.html -->
+<!-- Author: Minjie Zuo, 4/15/2026 -->
+<!-- This is the template for the login form in the restaurant review and recommendation app. -->
+
+{% extends "project/base.html" %}
+
+{% block content %}
+<h1>Login</h1>
+
+<form method="post" action="{% url 'login' %}">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    {% if request.GET.next %}
+        <input type="hidden" name="next" value="{{ request.GET.next }}">
+    {% else %}
+        <input type="hidden" name="next" value="{% url 'show_profile' %}">
+    {% endif %}
+
+    <input type="submit" value="Login">
+</form>
+{% endblock %}

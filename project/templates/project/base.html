@@ -1,0 +1,46 @@
+<!-- project/templates/project/base.html -->
+<!--Author: Minjie Zuo, 4/14/2026-4/18/2026-->
+<!-- This is the base template for the restaurant review and recommendation app. -->
+
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Foodie</title>
+    <link rel="stylesheet" href="{% static 'projectstyle.css' %}">
+</head>
+<body>
+
+    <header class="bar">
+        <div class="bar-l">
+            <!-- The logo on the left side of the header, linking to the homepage -->
+            <a class="logo" href="{% url 'show_all_restaurants' %}">Foodie</a>
+        </div>
+
+        <nav class="bar-m">
+            <a href="{% url 'show_all_restaurants' %}">Restaurants</a>
+        </nav>
+
+        <div class="bar-r">
+            <!--make sure the user is logged in-->
+            {% if request.user.is_authenticated %}
+                <a class="btn btn-l" href="{% url 'show_profile' %}">My Profile</a>
+
+                <form method="post" action="{% url 'logout' %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button class="btn btn-s" type="submit">Logout</button>
+                </form>
+            {% else %}
+                <a class="btn btn-l" href="{% url 'login' %}">Login</a>
+                <a class="btn btn-s" href="{% url 'create_profile' %}">Sign Up</a>
+            {% endif %}
+        </div>
+    </header>
+
+    <main class="page">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+</body>
+</html>

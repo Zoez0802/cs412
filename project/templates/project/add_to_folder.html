@@ -1,0 +1,75 @@
+<!-- project/templates/project/add_to_folder.html -->
+<!--Author: Minjie Zuo, 4/28/2026-->
+<!--This template is use to let user custom folder and add resturant into their folder-->
+
+{% extends "project/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="folder-page">
+
+  <div class="folder-box">
+    <div class="folder-title">Save to Folder</div>
+
+    <div class="folder-sub">
+      Add <strong>{{ restaurant.name }}</strong> to one of your custom folders.
+    </div>
+
+    {% if error_message %}
+        <div class="folder-error">
+            {{ error_message }}
+        </div>
+    {% endif %}
+
+    <form method="post" class="folder-form">
+      {% csrf_token %}
+
+      <div class="folder-section">
+        <label>Choose an existing folder</label>
+
+        {% if folders %}
+          <select name="folder_id">
+            <option value="">Select a folder</option>
+
+            {% for folder in folders %}
+              {% if folder.pk in saved_folder_ids %}
+                <option value="{{ folder.pk }}" disabled class="saved-folder-option">
+                  {{ folder.name }} (saved)
+                </option>
+              {% else %}
+                <option value="{{ folder.pk }}">
+                  {{ folder.name }}
+                </option>
+              {% endif %}
+            {% endfor %}
+
+          </select>
+        {% else %}
+          <div class="folder-empty">
+            You do not have any folders yet.
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="folder-or">or</div>
+
+      <div class="folder-section">
+        <label>Create a new folder</label>
+        {{ form.name }}
+      </div>
+
+      <div class="folder-actions">
+        <button type="submit" class="folder-save-btn">Save Restaurant</button>
+
+        <a href="{% url 'show_all_restaurants' %}" class="folder-cancel">
+          Cancel
+        </a>
+      </div>
+
+    </form>
+  </div>
+
+</div>
+
+{% endblock %}

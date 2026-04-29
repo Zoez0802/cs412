@@ -1,0 +1,246 @@
+<!-- project/templates/project/show_restaurant.html -->
+<!--Author: Minjie Zuo, 4/14/2026 to 4/28/2026-->
+<!-- This is the template for the restaurant review and recommendation app. -->
+
+{% extends "project/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="card">
+
+  <!-- image and basic info -->
+  <div class="top">
+
+    <!-- Restaurant image -->
+    <div class="pic">
+      {% if restaurant.image_file %}
+        <img class="pic-img" src="{{ restaurant.image_file.url }}" alt="{{ restaurant.name }}">
+      {% else %}
+        <img class="pic-img" src="{% static 'R.png' %}" alt="default restaurant image">
+      {% endif %}
+    </div>
+
+    <!-- Restaurant info -->
+    <div class="info">
+
+      <div class="name">
+        {{ restaurant.name }}
+      </div>
+
+      <div class="sub">
+        {{ restaurant.cuisine }} restaurant · {{ restaurant.area }} · {{ restaurant.price_level }}
+      </div>
+
+      <div class="bio">
+        <strong>Street Address:</strong> {{ restaurant.street_address }}
+      </div>
+
+      {% if restaurant.description %}
+        <div class="bio">
+          <strong>Description:</strong> {{ restaurant.description }}
+        </div>
+      {% endif %}
+
+      <!-- Buttons: add review and favorite -->
+      {% if request.user.is_authenticated %}
+
+        <!--
+          Same row for both buttons.
+          CSS uses flex to keep them side by side.
+        -->
+        <div class="edit-row action-row">
+
+          <!-- Review button -->
+          <a class="edit-btn" href="{% url 'create_review' restaurant.pk %}">
+            Write a Review
+          </a>
+
+          <!-- Favorite (heart) button -->
+          {% if is_favorite %}
+            <form method="post" action="{% url 'remove_favorite' restaurant.pk %}">
+              {% csrf_token %}
+
+              <!--
+                The heart symbol uses HTML entity &#10084 so no image needed, easier to style with CSS.
+              -->
+              <button class="heart-btn filled-heart" type="submit" title="Remove from favorites">
+                &#10084;
+              </button>
+            </form>
+          {% else %}
+            <form method="post" action="{% url 'add_favorite' restaurant.pk %}">
+              {% csrf_token %}
+
+              <button class="heart-btn empty-heart" type="submit" title="Add to favorites">
+                &#10084;
+              </button>
+            </form>
+          {% endif %}
+
+        </div>
+
+      {% else %}
+        <!-- Not logged in -->
+        <div class="edit-row">
+          <a class="edit-btn"
+             href="{% url 'login' %}?next={% url 'show_restaurant' restaurant.pk %}">
+            Login to write a review
+          </a>
+        </div>
+      {% endif %}
+
+    </div>
+  </div>
+
+  <!-- Stats section -->
+  <div class="stats">
+
+    <div class="stat">
+      <strong>Overall Rating</strong>
+      <div>
+        {% if restaurant.get_average_rating %}
+          {{ restaurant.get_average_rating }}
+        {% else %}
+          No rating yet
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="stat">
+      <strong>Reviewed by</strong>
+      <div>{{ restaurant.get_num_reviews }} users</div>
+    </div>
+
+    <div class="stat">
+      <strong>Favorites of</strong>
+      <div>{{ restaurant.get_num_favorites }} users</div>
+    </div>
+
+  </div>
+
+  <!-- Reviews section -->
+  <div class="posts">
+    <div class="sec">Reviews</div>
+
+    <!--
+      Loop through all reviews passed from the view.
+      Each review shows text and optional uploaded photos.
+    -->
+    {% for review in reviews %}
+
+      <div class="post">
+
+      <div class="post-head">
+        <div class="review-user">
+          <a href="{% url 'show_other_profile' review.profile.pk %}" class="review-user-link">
+            {% if review.profile.profile_image %}
+              <img class="review-user-img"
+                  src="{{ review.profile.profile_image.url }}"
+                  alt="{{ review.profile.display_name }}">
+            {% else %}
+              <img class="review-user-img"
+                  src="{% static 'R.png' %}"
+                  alt="default profile image">
+            {% endif %}
+          </a>
+
+          <div class="review-user-text">
+            <strong>
+              <a href="{% url 'show_other_profile' review.profile.pk %}" class="review-user-name">
+                {{ review.profile.display_name }}
+              </a>
+            </strong>
+          </div>
+        </div>
+
+        <span class="rate">Rating: {{ review.rating }}/5</span>
+      </div>
+
+        <div class="time">
+          {{ review.created_at }}
+        </div>
+
+        <!-- Review text -->
+        {% if review.comment_text %}
+          <div class="text">
+            {{ review.comment_text }}
+          </div>
+        {% endif %}
+
+        <!--
+          Display uploaded images for this review.
+          allow 0–4 images.
+        -->
+        <div class="rev-pics">
+          {% for photo in review.get_all_photos %}
+            <img class="rev-pic"
+                 src="{{ photo.image_file.url }}"
+                 alt="review photo">
+          {% endfor %}
+        </div>
+
+        <div class="review-like-row">
+
+        {% if request.user.is_authenticated %}
+          <form method="post" action="{% url 'toggle_review_like' review.pk %}">
+            {% csrf_token %}
+
+            {% if review.pk in liked_review_ids %}
+              <button class="thumb-btn thumb-liked" type="submit" title="Unlike this review">
+                👍 Liked
+              </button>
+            {% else %}
+              <button class="thumb-btn" type="submit" title="Like this review">
+                👍 Like
+              </button>
+            {% endif %}
+          </form>
+        {% else %}
+          <a class="thumb-btn thumb-login"
+            href="{% url 'login' %}?next={% url 'show_restaurant' restaurant.pk %}"
+            onclick="alert('Please log in first to like reviews.');">
+            👍 Like
+          </a>
+        {% endif %}
+
+        {% if review.get_num_likes > 0 %}
+          <span class="like-count">
+            {{ review.get_num_likes }} like{% if review.get_num_likes != 1 %}s{% endif %}
+          </span>
+        {% endif %}
+
+        {% if request.user.is_authenticated and review.profile.user == request.user %}
+          <form method="post" action="{% url 'delete_review' review.pk %}" style="display:inline;">
+            {% csrf_token %}
+            <button class="trash-btn" title="Delete review">🗑</button>
+          </form>
+        {% endif %}
+
+</div>
+
+      </div>
+
+    {% empty %}
+      <div>No reviews yet.</div>
+    {% endfor %}
+
+  </div>
+
+  <!-- Back link -->
+  <p class="back-row">
+    {% if from_folder %}
+      <a class="folder-return-btn"
+        href="{% url 'show_profile' %}?show=folder_detail&folder_id={{ from_folder.pk }}">
+        ← Back to {{ from_folder.name }}
+      </a>
+    {% endif %}
+
+    <a class="back-link" href="{% url 'show_all_restaurants' %}">
+      Back to all restaurants
+    </a>
+  </p>
+
+</div>
+
+{% endblock %}
