@@ -163,8 +163,7 @@
   </div>
 </div>
 
-
-
+<!--favorite resturant location on map-->
 <div class="home {% if recommended_restaurant or trending_restaurant %}with-pick{% endif %}">
 
   <div class="main-side">
@@ -194,6 +193,7 @@
     <div class="list-wrap">
       <div class="sec">Restaurants</div>
 
+  <!-- restaurant list -->
   <div id="rest-list">
     {% for r in restaurants %}
       <div class="rest-card"
@@ -209,6 +209,7 @@
 
         <div class="rest-row">
 
+          <!--show restaurant image if exist, otherwise show a default image-->
           <div class="rest-left">
             {% if r.image_file %}
               <img class="rest-img" src="{{ r.image_file.url }}" alt="{{ r.name }}">
@@ -239,6 +240,7 @@
             </div>
           </div>
 
+          <!-- Save to Folder Button , if user is authenticated-->
           {% if request.user.is_authenticated %}
             {% if r.pk in saved_restaurant_ids %}
               <a class="folder-btn folder-saved"
@@ -273,6 +275,7 @@
     </div>
   </div>
 
+  <!-- Help Me Decide Section -->
   {% if help_me_decide == "1" and recommended_restaurant %}
     <div class="pick-side">
       <div class="pick-box">
@@ -316,7 +319,8 @@
     </div>
   {% endif %}
 
-
+  
+<!-- Trending Now Section -->
   {% if trending == "1" and trending_restaurant %}
     <div class="pick-side">
       <div class="pick-box">
@@ -399,8 +403,6 @@
   integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
   crossorigin=""
 />
-
-
 
 <!--
   Stretch feature:

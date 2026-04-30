@@ -597,6 +597,7 @@ class ToggleReviewLikeView(LoginRequiredMixin, View):
 
 #Allow user to delete their own review, and only their own review. This is a POST request to prevent accidental deletions from a wrong click.
 class DeleteReviewView(LoginRequiredMixin, View):
+    ''''Let a logged-in user delete one of their reviews. Only the owner of the review can delete it.'''
     def post(self, request, pk):
         review = get_object_or_404(Review, pk=pk)
 
